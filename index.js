@@ -41,6 +41,59 @@ server.listen(app.get('port'), () => {
 
 
 
+
+
+
+
+
+const fs = require("fs");
+const AWS = require('aws-sdk');
+require("aws-sdk/lib/maintenance_mode_message").suppress = true;
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.REGION, // por ejemplo, 'us-east-1'
+});
+
+AWS.config.getCredentials(function(err) {
+  if(err) console.log(err.stack, "error mierda");
+  else{
+    console.log("access key: ", AWS.config);
+  }
+})
+
+
+
+const rekognition = new AWS.Rekognition();
+
+// Leer la imagen de origen desde el archivo local
+const sourceImageData = fs.readFileSync('yo3.jpeg');
+const sourceImageBase64 = sourceImageData.toString('base64');
+
+// Leer la imagen objetivo desde el archivo local
+const targetImageData = fs.readFileSync('yo4.jpeg');
+const targetImageBase64 = targetImageData.toString('base64');
+
+const params = {
+  SourceImage: {
+    Bytes: Buffer.from(sourceImageBase64, 'base64'),
+  },
+  TargetImage: {
+    Bytes: Buffer.from(targetImageBase64, 'base64'),
+  },
+};
+
+rekognition.compareFaces(params, (err, data) => {
+  if (err) {
+    console.log(err, err.stack);
+  } else {
+    console.log(data.FaceMatches);
+  }
+});
+
+
+
 // app.get("/usuarios", async function (req, res) {
 //     try {
 //         const snapshot = await db.collection("usuarios").get();
