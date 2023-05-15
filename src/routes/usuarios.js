@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const db = require("./firestoreHelper");
+const db = require("../database/firestore");
 
-router.get("/usuariosr", async function(req, res){
+router.get("/usuarios", async function(req, res){
     try {
         const snapshot = await db.collection("usuarios").get();
         //console.log(snapshot);
