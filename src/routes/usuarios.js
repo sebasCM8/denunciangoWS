@@ -1,15 +1,10 @@
 const express = require("express");
-const ResponseResult = require("./models/responseresult");
-const UsuarioCtrl = require("./controllers/usuarioCtrl");
+const ResponseResult = require("../models/responseresult");
+const UsuarioCtrl = require("../controllers/usuarioCtrl");
 const router = express.Router();
-<<<<<<< HEAD:src/routes/usuarios.js
 const db = require("../database/firestore");
 
-router.get("/usuarios", async function(req, res){
-=======
-
 router.get("/usuariosr", async function (req, res) {
->>>>>>> 2df43fb61a9204419467b00dba74d70b584081d0:routes.js
     try {
         const snapshot = await db.collection("usuarios").get();
         //console.log(snapshot);

@@ -1,7 +1,7 @@
-const GenericOps = require("../models/genericops");
+const GenericOps = require("../../models/genericops");
 const ResponseResult = require("../models/responseresult");
 const Usuario = require("../models/usuario");
-const db = require("../firestoreHelper");
+const db = require("../database/firestore");
 const MISPARAMS = require("./misParams");
 
 class UsuarioCtrl {
