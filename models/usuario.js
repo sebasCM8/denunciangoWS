@@ -33,19 +33,19 @@ class Usuario {
 
     toApiResp() {
         var usrData = {
-            "usuCI": this.usuCI,
-            "usuNombre": this.usuNombre,
-            "usuPaterno": this.usuPaterno,
-            "usuMaterno": this.usuMaterno,
-            "usuEmail": this.usuEmail,
-            "usuPass": this.usuPass,
-            "usuLat": this.usuLat,
-            "usuLng": this.usuLng,
-            "usuDireccion": this.usuDireccion,
-            "usuBloqueado": this.usuBloqueado,
-            "usuCantidadIntentos": this.usuCantidadIntentos,
-            "usuFechaBloqueo": this.usuFechaBloqueo,
-            "usuFechaUltPass": this.usuFechaUltPass
+            usuCI: this.usuCI,
+            usuNombre: this.usuNombre,
+            usuPaterno: this.usuPaterno,
+            usuMaterno: this.usuMaterno,
+            usuEmail: this.usuEmail,
+            usuPass: this.usuPass,
+            usuLat: this.usuLat,
+            usuLng: this.usuLng,
+            usuDireccion: this.usuDireccion,
+            usuBloqueado: this.usuBloqueado,
+            usuCantidadIntentos: this.usuCantidadIntentos,
+            usuFechaBloqueo: this.usuFechaBloqueo,
+            usuFechaUltPass: this.usuFechaUltPass
         };
         return usrData;
     }
