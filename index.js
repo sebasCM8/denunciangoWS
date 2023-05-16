@@ -8,14 +8,13 @@ require('dotenv').config();
 const { dbSegipConnection } = require('./src/database/segip_config');
 
 // DB Config MONGODB
-dbSegipConnection();
+//dbSegipConnection();
 
 const app = express();
 const server = http.createServer(app);
 
 
 // settings
-app.set('port', process.env.PORT || 5000);
 var corsOpt = {
     origin: "*"
 };
@@ -28,8 +27,9 @@ app.use(bodyparser.json());
 
 
 //init all web routes
-app.use('/api', require('./src/routes/usuarios'));
+app.use('/api', require('./src/routes/usuariosroutes'));
 
+app.set('port', process.env.PORT || 5000);
 
 //Start Server
 server.listen(app.get('port'), () => {
