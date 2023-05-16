@@ -1,4 +1,4 @@
-const GenericOps = require("../../models/genericops");
+const GenericOps = require("../models/genericops");
 const ResponseResult = require("../models/responseresult");
 const Usuario = require("../models/usuario");
 const db = require("../database/firestore");
@@ -25,7 +25,7 @@ class UsuarioCtrl {
         var snapshot = await usuariosRef.where("usuEmail", "==", email).get();
         if (snapshot.empty) {
             response.ok = false;
-            response.msg = "El email no esta registrado";
+            response.msg = "Datos incorrectos";
             return response;
         }
         var theUser = new Usuario();
@@ -43,10 +43,12 @@ class UsuarioCtrl {
 
             theUser.usuBloqueado = false;
             theUser.usuCantidadIntentos = 0;
+            theUser.usuFechaBloqueo = "";
             //actualizar db
             await usuariosRef.doc(docId).update({
                 "usuBloqueado": theUser.usuBloqueado,
-                "usuCantidadIntentos": theUser.usuCantidadIntentos
+                "usuCantidadIntentos": theUser.usuCantidadIntentos,
+                "usuFechaBloqueo": theUser.usuFechaBloqueo
             });
         }
 

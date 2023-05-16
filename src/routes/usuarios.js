@@ -2,23 +2,6 @@ const express = require("express");
 const ResponseResult = require("../models/responseresult");
 const UsuarioCtrl = require("../controllers/usuarioCtrl");
 const router = express.Router();
-const db = require("../database/firestore");
-
-router.get("/usuariosr", async function (req, res) {
-    try {
-        const snapshot = await db.collection("usuarios").get();
-        //console.log(snapshot);
-        var usuarios = [];
-        snapshot.forEach((doc) => {
-            usuarios.push(doc.data());
-        });
-        //console.log(usuarios);
-        res.status(200).send({ ok: true, msg: "Usuarios obtenidos correctamente", data: usuarios });
-    } catch (e) {
-        console.log("Excepcion: " + e);
-        res.status(200).send({ ok: false, msg: "Error en la solicitud" });
-    }
-});
 
 router.post("/login", async function (req, res) {
     var response = new ResponseResult();
@@ -28,8 +11,12 @@ router.post("/login", async function (req, res) {
         response.ok = false;
         response.msg = "Excepcion al iniciar sesion: " + e;
     }
-    console.log(response);
     return res.status(200).send(response.getResponseData());
 });
 
-module.exports = router; 
+//rgistrar paso1: ci
+//registrar paso2: ci, imageusu
+//registrar paso3: email
+//registrar final: todo
+
+module.exports = router;

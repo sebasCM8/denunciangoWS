@@ -1,13 +1,11 @@
 const express = require("express");
 const http = require("http");
-const path = require("path");
 const cors = require("cors");
-const morgan = require('morgan'); //Middleware de registro de solicitudes HTTP para node.js
+//const morgan = require('morgan'); //Middleware de registro de solicitudes HTTP para node.js
 const bodyparser = require("body-parser");
 require('dotenv').config();
 
 const { dbSegipConnection } = require('./src/database/segip_config');
-const db = require("./src/database/firestore");
 
 // DB Config MONGODB
 dbSegipConnection();
@@ -22,7 +20,7 @@ var corsOpt = {
     origin: "*"
 };
 app.use(cors(corsOpt));
-app.use(morgan('dev'));
+//app.use(morgan('dev'));
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
@@ -38,14 +36,7 @@ server.listen(app.get('port'), () => {
     console.log('Denunciango Web Service on port ', app.get('port'));
 });
 
-
-
-
-
-
-
-
-
+/*
 const fs = require("fs");
 const AWS = require('aws-sdk');
 require("aws-sdk/lib/maintenance_mode_message").suppress = true;
@@ -68,11 +59,11 @@ AWS.config.getCredentials(function(err) {
 const rekognition = new AWS.Rekognition();
 
 // Leer la imagen de origen desde el archivo local
-const sourceImageData = fs.readFileSync('yo3.jpeg');
+const sourceImageData = fs.readFileSync('./imgns/dana1.jpg');
 const sourceImageBase64 = sourceImageData.toString('base64');
 
 // Leer la imagen objetivo desde el archivo local
-const targetImageData = fs.readFileSync('yo4.jpeg');
+const targetImageData = fs.readFileSync('./imgns/dana2.jpg');
 const targetImageBase64 = targetImageData.toString('base64');
 
 const params = {
@@ -90,22 +81,4 @@ rekognition.compareFaces(params, (err, data) => {
   } else {
     console.log(data.FaceMatches);
   }
-});
-
-
-
-// app.get("/usuarios", async function (req, res) {
-//     try {
-//         const snapshot = await db.collection("usuarios").get();
-//         //console.log(snapshot);
-//         var usuarios = [];
-//         snapshot.forEach((doc) => {
-//             usuarios.push(doc.data());
-//         });
-//         //console.log(usuarios);
-//         res.status(200).send({ ok: true, msg: "Usuarios obtenidos correctamente", data: usuarios });
-//     } catch (e) {
-//         console.log("Excepcion: " + e);
-//         res.status(200).send({ ok: false, msg: "Error en la solicitud" });
-//     }
-// });
+});*/

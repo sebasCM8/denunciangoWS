@@ -6,7 +6,7 @@ class ResponseResult {
     }
 
     getResponseData() {
-        var response = { "ok": this.ok, "msg": this.msg, "data": this.data };
+        var response = { ok: this.ok, msg: this.msg, data: this.data };
         return response;
     }
 }
