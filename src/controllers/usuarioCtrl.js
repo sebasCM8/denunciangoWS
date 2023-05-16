@@ -4,6 +4,8 @@ const Usuario = require("../models/usuario");
 const db = require("../database/firestore");
 const MISPARAMS = require("./misParams");
 const Image = require("../models/image");
+const sendEmail = require('../helpers/sendGridUtils');
+const compareFaces = require("../helpers/awsUtils");
 
 
 class UsuarioCtrl {
