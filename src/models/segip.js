@@ -4,3 +4,5 @@ class Segip{
         this.segImg = "";
     }
 }
+
+

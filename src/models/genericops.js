@@ -30,6 +30,16 @@ class GenericOps {
         return result;
     }
 
+    static generateVerificationCode() {
+        const min = 1000; // El número mínimo de 4 dígitos
+        const max = 9999; // El número máximo de 4 dígitos
+      
+        // Generar un número aleatorio en el rango específico
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+        return randomNumber;
+    };
+
 }
 
 module.exports = GenericOps;
