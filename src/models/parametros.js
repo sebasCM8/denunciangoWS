@@ -1,9 +1,11 @@
-class Parametros{
-    constructor(){
-        this.parId = "";
-        this.parValor = "";
+class Parametro{
+    constructor(id, valor){
+        this.parId = id;
+        this.parValor = valor;
     }
 }
+
+module.exports = Parametro;
 
 /*
 {parId: "LoginIntentos", parValor: 3}
