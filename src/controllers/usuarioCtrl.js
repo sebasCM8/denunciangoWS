@@ -4,9 +4,8 @@ const Usuario = require("../models/usuario");
 const db = require("../database/firestore");
 const MISPARAMS = require("./misParams");
 const Image = require("../models/image");
-const sendEmail = require('../helpers/sendGridUtils');
+const sendEmail = require("../helpers/sendGridUtils");
 const compareFaces = require("../helpers/awsUtils");
-
 
 class UsuarioCtrl {
   constructor() {}
@@ -97,65 +96,88 @@ class UsuarioCtrl {
 
   static async registroVerificarCarnet(ci) {
     var response = new ResponseResult();
-    var img = await Image.findOne({ci: ci})
+    var img = await Image.findOne({ ci: ci });
     if (img == null) {
       response.ok = false;
-      response.msg = "Carnet no registrado en el SEGIP"; //
-      console.log("ci no registrado");
+      response.msg = "Carnet no registrado en el SEGIP";
+      return response;
+    }
+    var usuariosRef = db.collection("usuarios");
+    var snapshot = await usuariosRef.where("usuCI", "==", ci).get();
+    if (!snapshot.empty) {
+      response.ok = false;
+      response.msg = "Ya existe un usuario registrado con ese CI";
       return response;
     }
     response.ok = true;
-    response.msg = "CI encontrado"; //
-    console.log("CI encontrado");
+    response.msg = "CI encontrado";
     return response;
   }
 
-
-  static async registroVerificarFoto(ci, imageusu) {
+  static async registroVerificarFoto(ci, imageApp) {
     var response = new ResponseResult();
-    var img = await Image.findOne({ci: ci})
-    if (img == null) {
-      response.ok = false;
-      response.msg = "Carnet no registrado en el SEGIP"; //
-      console.log("ci no registrado");
-      return response;
-    }
+    var img = await Image.findOne({ ci: ci });
+    const imageSegip = img.imageData;
+    let porcentaje;
+
+    await compareFaces(imageSegip, imageApp)
+      .then((similitud) => {
+        porcentaje = similitud;
+      })
+      .catch(() => {
+        response.ok = false;
+        response.msg = "Error al comparar rostros";
+        return response;
+      });
+
     response.ok = true;
-    response.msg = "CI encontrado"; //
-    console.log("CI encontrado");
+    response.msg = "Comparacion de rostros exitosa"; //
+    response.data = {
+      similitud: porcentaje,
+    };
     return response;
   }
-
-
 
   static async registroVerificarCorreo(email) {
     var response = new ResponseResult();
-    var img = await Image.findOne({ci: ci})
-    if (img == null) {
+    var usuariosRef = db.collection("usuarios");
+    var snapshot = await usuariosRef.where("usuEmail", "==", email).get();
+    if (!snapshot.empty) {
       response.ok = false;
-      response.msg = "Carnet no registrado en el SEGIP"; //
-      console.log("ci no registrado");
+      response.msg = "Ya existe un usuario registrado con ese correo";
       return response;
     }
+    let code;
+    await sendEmail(email)
+      .then((codigo) => {
+        code = codigo;
+      })
+      .catch((error) => {
+        response.ok = false;
+        response.msg =
+          "Error al enviar el correo con el codigo de verificacion";
+        return response;
+      });
     response.ok = true;
-    response.msg = "CI encontrado"; //
-    console.log("CI encontrado");
+    response.msg = "CI encontrado";
+    response.data = {
+      codigo: code,
+    };
     return response;
   }
 
-
   static async registroFinalizado() {
     var response = new ResponseResult();
-    var img = await Image.findOne({ci: ci})
+    var img = await Image.findOne({ ci: ci });
     if (img == null) {
       response.ok = false;
       response.msg = "Carnet no registrado en el SEGIP"; //
-      console.log("ci no registrado");
+
       return response;
     }
     response.ok = true;
     response.msg = "CI encontrado"; //
-    console.log("CI encontrado");
+
     return response;
   }
 }
