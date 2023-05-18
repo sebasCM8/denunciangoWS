@@ -3,7 +3,7 @@ const http = require("http");
 const cors = require("cors");
 //const morgan = require('morgan'); //Middleware de registro de solicitudes HTTP para node.js
 const bodyparser = require("body-parser");
-require('dotenv').config();
+require("dotenv").config();
 
 //const { dbSegipConnection } = require('./src/database/segip_config');
 
@@ -13,10 +13,9 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
-
 // settings
 var corsOpt = {
-    origin: "*"
+  origin: "*",
 };
 app.use(cors(corsOpt));
 //app.use(morgan('dev'));
@@ -24,61 +23,61 @@ app.use(cors(corsOpt));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
-
-
 //init all web routes
 app.use('/api', require('./src/routes/usuariosroutes'));
 
 app.set('port', process.env.PORT || 5000);
 
 //Start Server
-server.listen(app.get('port'), () => {
-    console.log('Denunciango Web Service on port ', app.get('port'));
+server.listen(app.get("port"), () => {
+  console.log("Denunciango Web Service on port ", app.get("port"));
 });
 
-/*
-const fs = require("fs");
-const AWS = require('aws-sdk');
-require("aws-sdk/lib/maintenance_mode_message").suppress = true;
+// const sendEmail = require('./src/helpers/sendGridUtils')
+// sendEmail('olmoscamposh@gmail.com')
+//   .then(() => {
+//     console.log('Correo electrónico enviado exitosamente');
+//     // Continúa con el resto de tu lógica aquí
+//   })
+//   .catch((error) => {
+//     console.error('Error al enviar el correo electrónico:', error);
+//     // Maneja el error aquí
+//   });
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.REGION, // por ejemplo, 'us-east-1'
-});
+// const compareFaces = require("./src/helpers/awsUtils");
+// compareFaces(imageData)
+//   .then((similitud) => {
+//     console.log("Coincidencias de rostros:", similitud);
+//     // Continúa con el resto de tu lógica aquí
+//   })
+//   .catch((error) => {
+//     console.error("Error al comparar rostros:", error);
+//     // Maneja el error aquí
+//   });
 
-AWS.config.getCredentials(function(err) {
-  if(err) console.log(err.stack, "error mierda");
-  else{
-    console.log("access key: ", AWS.config);
-  }
-})
+// //ESTO ES PA RECUPERAR LA IMAGEN
+// const Image = require("./src/models/image");
+// const ci = "9020704"; //CI asociado a la imagen que quiero recuperar
+// Image.findOne({ ci: ci })
+//   .then((imageObject) => {
+//     if (imageObject) {
+//       const imageData = imageObject.imageData; // Objeto binario de la imagen
+//       compareFaces(imageData)
+//         .then((similitud) => {
+//           console.log("Coincidencias de rostros:", similitud);
+//           // Continúa con el resto de tu lógica aquí
+//         })
+//         .catch((error) => {
+//           console.error("Error al comparar rostros:", error);
+//           // Maneja el error aquí
+//         });
+//     } else {
+//       console.log("No se encontró la imagen");
+//     }
+//   })
+//   .catch((err) => {
+//     console.log("Error al recuperar la imagen:", err);
+//   });
+// // FIN RECUPERAR LA IMAGEN
 
 
-
-const rekognition = new AWS.Rekognition();
-
-// Leer la imagen de origen desde el archivo local
-const sourceImageData = fs.readFileSync('./imgns/dana1.jpg');
-const sourceImageBase64 = sourceImageData.toString('base64');
-
-// Leer la imagen objetivo desde el archivo local
-const targetImageData = fs.readFileSync('./imgns/dana2.jpg');
-const targetImageBase64 = targetImageData.toString('base64');
-
-const params = {
-  SourceImage: {
-    Bytes: Buffer.from(sourceImageBase64, 'base64'),
-  },
-  TargetImage: {
-    Bytes: Buffer.from(targetImageBase64, 'base64'),
-  },
-};
-
-rekognition.compareFaces(params, (err, data) => {
-  if (err) {
-    console.log(err, err.stack);
-  } else {
-    console.log(data.FaceMatches);
-  }
-});*/
