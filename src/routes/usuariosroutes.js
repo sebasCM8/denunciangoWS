@@ -70,7 +70,7 @@ router.post("/registrarPasoDos", async function (req, res) {
   });
   
   //registrar final: todo
-  router.get("/registrarPasoFinal", async function (req, res) {
+  router.post("/registrarPasoFinal", async function (req, res) {
     var response = new ResponseResult();
     try {
       response = await UsuarioCtrl.registroFinalizado(response);
