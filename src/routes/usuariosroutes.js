@@ -85,10 +85,10 @@ router.post("/registrarPasoFinal", async function (req, res) {
 router.post("/registrarPasoDos", async function (req, res) {
     var response = new ResponseResult();
     try {
-      response = await UsuarioCtrl.registroVerificarFoto(req.body.ci,req.body.imageusu);
+      response = await UsuarioCtrl.registroVerificarFotoCI(req.body.ci,req.body.imageusu);
       // const fs = require("fs");
-      // const img = fs.readFileSync("i1.png").toString("base64");
-      // response = await UsuarioCtrl.registroVerificarFotoCI("1234567", img);
+      // const img = fs.readFileSync("i8.png").toString("base64");
+      // response = await UsuarioCtrl.registroVerificarFotoCI("7713325", img);
     } catch (e) {
       response.ok = false;
       response.msg = "Excepcion al relizar registro: " + e;

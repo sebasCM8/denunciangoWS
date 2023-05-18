@@ -49,6 +49,7 @@ class Usuario {
         };
         return usrData;
     }
+
 }
 
 module.exports = Usuario;
