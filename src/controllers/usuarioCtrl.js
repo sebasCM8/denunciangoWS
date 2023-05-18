@@ -197,18 +197,18 @@ class UsuarioCtrl {
 
     // Crear un nuevo documento en la colección de usuarios
     const newUser = {
-      usuCI: usuario.usuCI,
-      usuNombre: usuNombre,
-      usuPaterno: usuPaterno,
-      usuMaterno: usuMaterno,
-      usuEmail: "",
-      usuPass: "",
+      usuCI: "1234567",
+      usuNombre: "Osvaldo",
+      usuPaterno: "el",
+      usuMaterno: "mariana",
+      usuEmail: "usuario@gmail.com",
+      usuPass: "u1234567",
       usuLat: "",
       usuLng: "",
-      usuDireccion: "",
+      usuDireccion: "calle 26 de enero",
       usuBloqueado: false,
       usuCantidadIntentos: 0,
-      usuFechaBloqueo: fechaActual,
+      usuFechaBloqueo: "",
       usuFechaUltPass: fechaActual,
     };
 
@@ -224,10 +224,8 @@ class UsuarioCtrl {
       });
 
     response.ok = true;
-    response.msg = "Usuario registrado"; //
-    response.data = {
-      id: docId,
-    };
+    response.msg = "Registrado exitosamente"; //
+    response.data = docId;
 
     return response;
   }
