@@ -19,8 +19,6 @@ class UsuarioCtrl {
         return true;
     }
 
-
-
     static async login(email, password) {
         var response = new ResponseResult();
 
