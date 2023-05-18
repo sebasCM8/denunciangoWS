@@ -64,10 +64,10 @@ router.post("/registrarPasoTres", async function (req, res) {
 });
 
 //registrar final: todo
-router.get("/registrarPasoFinal", async function (req, res) {
+router.post("/registrarPasoFinal", async function (req, res) {
   var response = new ResponseResult();
   try {
-    response = await UsuarioCtrl.registroFinalizado(response);
+    response = await UsuarioCtrl.registroFinalizado(req.body.usu);
   } catch (e) {
     response.ok = false;
     response.msg = "Excepcion al realizar registro: " + e;
