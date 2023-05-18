@@ -25,7 +25,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
 //init all web routes
-app.use("/api", require("./src/routes/usuarios"));
+app.use('/api', require('./src/routes/usuariosroutes'));
 
 //Start Server
 server.listen(app.get("port"), () => {
