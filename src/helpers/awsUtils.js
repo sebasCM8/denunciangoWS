@@ -1,18 +1,20 @@
 const { rekognition } = require("../controllers/awsCtrl");
 
-// imageSegip: la imagen del segip de tipo Buffer
-// imageApp: la imagen enviada desde la app movil de tipo Buffer
+// imageSegip: la imagen del segip de tipo String, base64
+// imageApp: la imagen enviada desde la app movil de tipo String, base64
 
 function compareFaces(imageSegip, imageApp) {
-  const sourceImageBase64 = imageSegip.toString("base64");
-  const targetImageBase64 = imageApp.toString("base64");
+  // const sourceImageBase64 = imageSegip.toString("base64");
+  // const targetImageBase64 = imageApp.toString("base64");
+  // const sourceImageBase64 = imageSegip;
+  // const targetImageBase64 = imageApp;
 
   const params = {
     SourceImage: {
-      Bytes: Buffer.from(sourceImageBase64, "base64"),
+      Bytes: Buffer.from(imageSegip, "base64"),
     },
     TargetImage: {
-      Bytes: Buffer.from(targetImageBase64, "base64"),
+      Bytes: Buffer.from(imageApp, "base64"),
     },
   };
   return new Promise((resolve, reject) => {

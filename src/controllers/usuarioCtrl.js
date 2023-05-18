@@ -95,9 +95,10 @@ class UsuarioCtrl {
   }
 
   static async registroVerificarCarnet(ci) {
+    //ya no se necesita
     var response = new ResponseResult();
-    var img = await Image.findOne({ ci: ci });
-    if (img == null) {
+    var userSegip = await Image.findOne({ ci: ci });
+    if (userSegip == null) {
       response.ok = false;
       response.msg = "Carnet no registrado en el SEGIP";
       return response;
@@ -114,15 +115,30 @@ class UsuarioCtrl {
     return response;
   }
 
-  static async registroVerificarFoto(ci, imageApp) {
+  static async registroVerificarFotoCI(ci, imageApp) {
+    //la imageApp ya esta en string base64
     var response = new ResponseResult();
-    var img = await Image.findOne({ ci: ci });
-    const imageSegip = img.imageData;
-    let porcentaje;
+    var userSegip = await Image.findOne({ ci: ci });
 
+    if (userSegip == null) {
+      response.ok = false;
+      response.msg = "Datos de cedula de identidad no validos";
+      return response;
+    }
+
+    var usuariosRef = db.collection("usuarios");
+    var snapshot = await usuariosRef.where("usuCI", "==", ci).get();
+    if (!snapshot.empty) {
+      response.ok = false;
+      response.msg = "Usuario ya registrado";
+      return response;
+    }
+    //convierte la imagen del user segip a base64
+    const imageSegip = userSegip.imageData.toString("base64");
+    let porcentajeSimilitud;
     await compareFaces(imageSegip, imageApp)
       .then((similitud) => {
-        porcentaje = similitud;
+        porcentajeSimilitud = similitud;
       })
       .catch(() => {
         response.ok = false;
@@ -130,11 +146,21 @@ class UsuarioCtrl {
         return response;
       });
 
+    if (porcentajeSimilitud < 90) {
+      //Aqui entra si la foto no coincide con la del segip
+      response.ok = false;
+      response.msg = "Los datos no coinciden, intentar de nuevo";
+      return response;
+    }
+    const datoUsuSegip = {
+      nombre: userSegip.nombre,
+      paterno: userSegip.paterno,
+      materno: userSegip.materno,
+      ci: userSegip.ci
+    }
     response.ok = true;
-    response.msg = "Comparacion de rostros exitosa"; //
-    response.data = {
-      similitud: porcentaje,
-    };
+    response.msg = "Verificacion de identidad exitosa";
+    response.data = datoUsuSegip;
     return response;
   }
 
@@ -159,24 +185,49 @@ class UsuarioCtrl {
         return response;
       });
     response.ok = true;
-    response.msg = "CI encontrado";
-    response.data = {
-      codigo: code,
-    };
+    response.msg = "Codigo de verificacion enviado";
+    response.data = code;
     return response;
   }
 
-  static async registroFinalizado() {
+  static async registroFinalizado(usuario) {
     var response = new ResponseResult();
-    var img = await Image.findOne({ ci: ci });
-    if (img == null) {
-      response.ok = false;
-      response.msg = "Carnet no registrado en el SEGIP"; //
+    const usersCollection = db.collection("usuarios");
+    var fechaActual = GenericOps.getDateTime();
 
-      return response;
-    }
+    // Crear un nuevo documento en la colección de usuarios
+    const newUser = {
+      usuCI: usuario.usuCI,
+      usuNombre: usuNombre,
+      usuPaterno: usuPaterno,
+      usuMaterno: usuMaterno,
+      usuEmail: "",
+      usuPass: "",
+      usuLat: "",
+      usuLng: "",
+      usuDireccion: "",
+      usuBloqueado: false,
+      usuCantidadIntentos: 0,
+      usuFechaBloqueo: fechaActual,
+      usuFechaUltPass: fechaActual,
+    };
+
+    let docId;
+    await usersCollection
+      .add(newUser)
+      .then((docRef) => {
+        docId = docRef.id;
+      })
+      .catch((error) => {
+        response.ok = true;
+        response.msg = "Error al registrar el usuario"; //
+      });
+
     response.ok = true;
-    response.msg = "CI encontrado"; //
+    response.msg = "Usuario registrado"; //
+    response.data = {
+      id: docId,
+    };
 
     return response;
   }
