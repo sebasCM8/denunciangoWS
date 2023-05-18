@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 
-const { dbSegipConnection } = require("./src/database/segip_config");
+const { dbSegipConnection } = require('./src/database/segip_config');
 
 // DB Config MONGODB
 dbSegipConnection();
