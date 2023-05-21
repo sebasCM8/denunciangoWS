@@ -20,8 +20,8 @@ var corsOpt = {
 app.use(cors(corsOpt));
 //app.use(morgan('dev'));
 
-app.use(bodyparser.urlencoded({ extended: true }));
-app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ limit:'15mb', extended: true }));
+app.use(bodyparser.json({limit: '15mb'}));
 
 //init all web routes
 app.use('/api', require('./src/routes/usuariosroutes'));

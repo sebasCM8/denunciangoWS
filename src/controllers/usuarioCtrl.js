@@ -280,8 +280,8 @@ class UsuarioCtrl {
             usuMaterno: usuario.usuMaterno,
             usuEmail: usuario.usuEmail,
             usuPass: usuario.usuPass,
-            usuLat: usuario.usuLat,
-            usuLng: usuario.usuLng,
+            usuLat: "",
+            usuLng: "",
             usuDireccion: usuario.usuDireccion,
             usuBloqueado: false,
             usuCantidadIntentos: 0,
@@ -296,8 +296,9 @@ class UsuarioCtrl {
                 docId = docRef.id;
             })
             .catch((error) => {
-                response.ok = true;
+                response.ok = false;
                 response.msg = "Error al registrar el usuario"; //
+                return response;
             });
 
         response.ok = true;

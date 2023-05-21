@@ -67,7 +67,8 @@ router.post("/registrarPasoTres", async function (req, res) {
 router.post("/registrarPasoFinal", async function (req, res) {
   var response = new ResponseResult();
   try {
-    response = await UsuarioCtrl.registroFinalizado(req.body.usu);
+    console.log(req.body);
+    response = await UsuarioCtrl.registroFinalizado(req.body);
   } catch (e) {
     response.ok = false;
     response.msg = "Excepcion al realizar registro: " + e;
