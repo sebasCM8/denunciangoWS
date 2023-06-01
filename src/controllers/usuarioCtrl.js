@@ -1,7 +1,7 @@
 const GenericOps = require("../models/genericops");
 const ResponseResult = require("../models/responseresult");
 const Usuario = require("../models/usuario");
-const db = require("../database/firestore");
+const { db } = require("../database/firestore");
 const ParametrosController = require("./parametrosCtrl");
 const Image = require("../models/image");
 const sendEmail = require("../helpers/sendGridUtils");
