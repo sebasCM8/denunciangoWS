@@ -1,5 +1,6 @@
 const express = require("express");
 const ResponseResult = require("../models/responseresult");
+const DenunciaCtrl = require("../controllers/denunciasCtrl");
 const router = express.Router();
 
 const { storage } = require("../database/cloudStorage");
@@ -58,33 +59,53 @@ router.post("/downloadImg", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
+// const tieneContenidoOfensivo = require("../helpers/openaiUtils");
+// router.get("/prueba", async function (req, res) {
+//   var response = new ResponseResult();
+//   var esOfensivo = "";
+//   try {
+//     esOfensivo = await tieneContenidoOfensivo(
+//       "Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución"
+//     );
+//     response.ok = true;
+//     response.msg = "la respuesta:" + esOfensivo;
+//     response.data = esOfensivo;
+//   } catch (e) {
+//     response.ok = false;
+//     response.msg = "Excepcion al realizar registro: " + e;
+//   }
+//   return res.status(200).send(response.getResponseData());
+// });
 
-
-
-
-
-
-const tieneContenidoOfensivo = require("../helpers/openaiUtils");
-router.get("/prueba", async function (req, res) {
+router.get("/denunciaPaso1", async function (req, res) {
   var response = new ResponseResult();
-  var esOfensivo = "";
   try {
-    esOfensivo = await tieneContenidoOfensivo(
-      "Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución"
+    response = await DenunciaCtrl.denunciaPaso1("Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución. Malditos hdp"
     );
-    response.ok = true;
-    response.msg = "la respuesta:" + esOfensivo;
-    response.data = esOfensivo;
+
   } catch (e) {
     response.ok = false;
-    response.msg = "Excepcion al realizar registro: " + e;
+    response.msg = "Excepcion en denuncia paso 1: " + e;
   }
   return res.status(200).send(response.getResponseData());
 });
 
-
-
-
-
+//registrar paso2: ci, imageusu
+router.get("/denunciaPaso2", async function (req, res) {
+  var response = new ResponseResult();
+  try {
+    //   response = await UsuarioCtrl.registroVerificarFotoCI(
+    //     req.body.ci,
+    //     req.body.imageusu
+    //   );
+    const fs = require("fs");
+    const img = fs.readFileSync("i9.jpg").toString("base64");
+    response = await DenunciaCtrl.denunciaPaso2(img);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion en denuncia paso 2: " + e;
+  }
+  return res.status(200).send(response.getResponseData());
+});
 
 module.exports = router;
