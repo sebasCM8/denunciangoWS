@@ -99,7 +99,7 @@ router.get("/denunciaPaso2", async function (req, res) {
     //     req.body.imageusu
     //   );
     const fs = require("fs");
-    const img = fs.readFileSync("i9.jpg").toString("base64");
+    const img = fs.readFileSync("imgns/i9.jpg").toString("base64");
     response = await DenunciaCtrl.denunciaPaso2(img);
   } catch (e) {
     response.ok = false;
