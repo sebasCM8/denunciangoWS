@@ -11,6 +11,7 @@ class Denuncia {
         this.denHora = "";
         this.denLat = "";
         this.denLng = "";
+        this.denImagenes = "";
     }
 
     getFromDb(denData) {
@@ -36,7 +37,8 @@ class Denuncia {
             denFecha: this.denFecha,
             denHora: this.denHora,
             denLat: this.denLat,
-            denLng: this.denLng
+            denLng: this.denLng,
+            denImagenes: this.denImagenes
         };
         return data;
     }

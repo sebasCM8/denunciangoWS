@@ -39,6 +39,7 @@ class DenunciaController {
     }
 
     static async registrarDenuncia(denData) {
+        console.log(denData);
         var response = new ResponseResult();
 
         var denObj = new Denuncia();
@@ -75,10 +76,14 @@ class DenunciaController {
         denObj.denEstado = 1;
         //await setDoc(doc(db, "denuncias", hash.toString()), denObj.toDbmap());
 
+        var denImagenes = "";
         for (let i = 0; i < denData.images.length; i++) {
-            var imgName = hash.toString() + i.toString();
-
+            var imgName = hash.toString() + i.toString() + ".txt";
+            const storageRef = ref(storage, imgName);
+            await uploadString(storageRef, denData.images[i]);
+            denImagenes += imgName + ", ";
         }
+        denObj.denImagenes = denImagenes;
 
         await db.collection("denuncias").doc(hash.toString()).set(denObj.toDbmap());
 
