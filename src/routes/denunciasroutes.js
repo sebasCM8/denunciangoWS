@@ -59,23 +59,7 @@ router.post("/downloadImg", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
-// const tieneContenidoOfensivo = require("../helpers/openaiUtils");
-// router.get("/prueba", async function (req, res) {
-//   var response = new ResponseResult();
-//   var esOfensivo = "";
-//   try {
-//     esOfensivo = await tieneContenidoOfensivo(
-//       "Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución"
-//     );
-//     response.ok = true;
-//     response.msg = "la respuesta:" + esOfensivo;
-//     response.data = esOfensivo;
-//   } catch (e) {
-//     response.ok = false;
-//     response.msg = "Excepcion al realizar registro: " + e;
-//   }
-//   return res.status(200).send(response.getResponseData());
-// });
+
 
 router.get("/denunciaPaso1", async function (req, res) {
   var response = new ResponseResult();
@@ -90,14 +74,10 @@ router.get("/denunciaPaso1", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
-//registrar paso2: ci, imageusu
+
 router.get("/denunciaPaso2", async function (req, res) {
   var response = new ResponseResult();
   try {
-    //   response = await UsuarioCtrl.registroVerificarFotoCI(
-    //     req.body.ci,
-    //     req.body.imageusu
-    //   );
     const fs = require("fs");
     const img = fs.readFileSync("imgns/i9.jpg").toString("base64");
     response = await DenunciaCtrl.denunciaPaso2(img);
