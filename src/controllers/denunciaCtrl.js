@@ -93,6 +93,23 @@ class DenunciaController {
         return response;
     }
 
+    static async obtenerDenunciasUsu(usuEmail) {
+        var response = new ResponseResult();
+        const denRef = db.collection("denuncias").where("denUsu", "==", usuEmail);
+        const snap = await denRef.get();
+
+        var denuncias = [];
+        for (let i = 0; i < snap.docs.length; i++) {
+            var den = new Denuncia();
+            den.getFromDb(snap.docs[i].data());
+            denuncias.push(den);
+        }
+        response.ok = true;
+        response.msg = "Denuncias obtenidas correctamente";
+        response.data = denuncias;
+        return response;
+    }
+
 }
 
 module.exports = DenunciaController;
