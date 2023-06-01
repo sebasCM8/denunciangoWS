@@ -1,52 +1,31 @@
-// const {
-//   ChatCompletionRequestMessage,
-//   CreateChatCompletionRequest
-// } = require('openai');
-const express = require('express');
-const router = express.Router();
+const { Configuration, OpenAIApi } = require("openai");
 
-const openai = require('../../libs/openai');
+async function tieneContenidoOfensivo(texto) {
+  const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
 
-router.post('/', async (req, res) => {
-  const requestMessages = req.body.messages;
+  const mensaje = '"' + texto + '"';
+  const promt =
+    "¿el siguiente texto tiene lenguaje ofensivo, odio, acoso o violencia? Si contiene la respuesta sera true, si no contiene false, solo quiero una palabra como respuesta. " +
+    mensaje;
 
-  try {
-    // let tokenCount = 0;
-    // requestMessages.forEach((msg) => {
-    //   const tokens = getTokens(msg.content);
-    //   tokenCount += tokens;
-    // });
+  //   try {
+  const apiRequestBody = {
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "system", content: promt }],
+    temperature: 0.6,
+  };
+  const completion = await openai.createChatCompletion(apiRequestBody);
+  const completionResp = completion.data.choices[0].message.content;
+  const cadena = completionResp.toLowerCase(); // A minusculas
+  const sinEspacios = cadena.replace(/\s/g, ""); // Quitar los espacios
+  const sinPuntos = sinEspacios.replace(/\./g, ""); // Quitar los puntos
 
-    const moderationResponse = await openai.createModeration({
-      input: requestMessages[requestMessages.length - 1].content,
-    });
-    if (moderationResponse.data.results[0]?.flagged) {
-      return res.status(400).send('El mensaje es inapropiado');
-    }
+  const esOfensivo = sinPuntos === "true";
+  return esOfensivo;
+  
+}
 
-    const prompt = 'Eres "Cappuccino", un asistente basado en IA que te ayuda a programar';
-
-    // tokenCount += getTokens(prompt);
-    // if (tokenCount > 4000) {
-    //   return res.status(400).send("Message is too long");
-    // }
-
-    const apiRequestBody = {
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: prompt }, ...requestMessages],
-      temperature: 0.6,
-    };
-    const completion = await openai.createChatCompletion(apiRequestBody);
-
-    res.json(completion.data);
-
-  } catch (error) {
-    if (error instanceof Error) {
-      // @ts-ignore
-      console.log(error);
-    }
-    res.status(500).send('Algo salió mal');
-  }
-});
-
-module.exports = router;
+module.exports = tieneContenidoOfensivo;

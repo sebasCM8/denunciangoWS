@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 require("aws-sdk/lib/maintenance_mode_message").suppress = true;
 
 AWS.config.update({
@@ -7,15 +7,14 @@ AWS.config.update({
   region: process.env.REGION, // por ejemplo, 'us-east-1'
 });
 
-AWS.config.getCredentials(function(err) {
-  if(err) console.log("Error de credenciales, no se puede conectar a AWS");
-  else{
+AWS.config.getCredentials(function (err) {
+  if (err) console.log("Error de credenciales, no se puede conectar a AWS");
+  else {
     console.log("Credenciales correctas, conectado a AWS");
   }
-})
+});
 
 const rekognition = new AWS.Rekognition();
-
 
 // const { rekognition } = require("../controllers/awsCtrl");
 
@@ -53,4 +52,32 @@ function compareFaces(imageSegip, imageApp) {
   });
 }
 
-module.exports = compareFaces;
+function detectarEtiquetas(image) {
+  //image se recibe como String en base64
+
+  const params = {
+    Image: {
+      Bytes: Buffer.from(image, "base64"),
+    },
+    MaxLabels: 10, // Número máximo de etiquetas a devolver
+    MinConfidence: 70, // Confianza mínima requerida para las etiquetas
+  };
+
+  return new Promise((resolve, reject) => {
+    rekognition.detectLabels(params, (err, data) => {
+      if (err) {
+        console.log(err, err.stack);
+        reject(err);
+      } else {
+        console.log(data.Labels);
+        // Aquí puedes procesar las etiquetas devueltas por Amazon Rekognition
+        resolve(data.Labels);
+      }
+    });
+  });
+}
+
+module.exports = {
+  compareFaces,
+  detectarEtiquetas,
+};

@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 
-const { dbSegipConnection } = require('./src/database/segip_config');
+const { dbSegipConnection } = require("./src/database/segip_config");
 
 // DB Config MONGODB
 dbSegipConnection();
@@ -21,19 +21,17 @@ var corsOpt = {
 app.use(cors(corsOpt));
 //app.use(morgan('dev'));
 
-app.use(bodyparser.urlencoded({ limit:'15mb', extended: true }));
-app.use(bodyparser.json({limit: '15mb'}));
+app.use(bodyparser.urlencoded({ limit: "15mb", extended: true }));
+app.use(bodyparser.json({ limit: "15mb" }));
 
 //init all web routes
-app.use('/api', require('./src/routes/usuariosroutes'));
-app.use('/api', require('./src/routes/denunciasroutes'));
+app.use("/api", require("./src/routes/usuariosroutes"));
+app.use("/api", require("./src/routes/denunciasroutes"));
 
 //Start Server
 server.listen(app.get("port"), () => {
   console.log("Denunciango Web Service on port ", app.get("port"));
 });
-
-
 
 
 

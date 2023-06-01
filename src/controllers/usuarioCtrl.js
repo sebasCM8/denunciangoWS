@@ -5,7 +5,7 @@ const { db } = require("../database/firestore");
 const ParametrosController = require("./parametrosCtrl");
 const Image = require("../models/image");
 const sendEmail = require("../helpers/sendGridUtils");
-const compareFaces = require("../helpers/awsUtils");
+const {compareFaces} = require("../helpers/awsUtils");
 
 class UsuarioCtrl {
     constructor() { }
