@@ -53,14 +53,14 @@ function compareFaces(imageSegip, imageApp) {
 }
 
 function detectarEtiquetas(image) {
-  //image se recibe como String en base64
+  //image enviada desde el movil como String en base64
 
   const params = {
     Image: {
       Bytes: Buffer.from(image, "base64"),
     },
-    MaxLabels: 10, // Número máximo de etiquetas a devolver
-    MinConfidence: 70, // Confianza mínima requerida para las etiquetas
+    MaxLabels: 15, // Número máximo de etiquetas a devolver
+    MinConfidence: 85, // Confianza mínima requerida para las etiquetas
   };
 
   return new Promise((resolve, reject) => {
@@ -69,7 +69,6 @@ function detectarEtiquetas(image) {
         console.log(err, err.stack);
         reject(err);
       } else {
-        console.log(data.Labels);
         // Aquí puedes procesar las etiquetas devueltas por Amazon Rekognition
         resolve(data.Labels);
       }

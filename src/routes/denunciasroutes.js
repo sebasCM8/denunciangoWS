@@ -79,7 +79,7 @@ router.get("/denunciaPaso2", async function (req, res) {
   var response = new ResponseResult();
   try {
     const fs = require("fs");
-    const img = fs.readFileSync("imgns/i9.jpg").toString("base64");
+    const img = fs.readFileSync("imgns/i7.jpg").toString("base64");
     response = await DenunciaCtrl.denunciaPaso2(img);
   } catch (e) {
     response.ok = false;
