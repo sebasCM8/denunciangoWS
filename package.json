@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "firebase": "^9.22.1",
     "firebase-admin": "^11.8.0",
+    "hashcode": "^1.0.3",
     "mongoose": "^7.1.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22"

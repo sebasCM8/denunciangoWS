@@ -22,7 +22,14 @@ class GenericOps {
         if (theMonth < 10) {
             strMonth = "0" + theMonth.toString();
         }
-        var theDate = d.getFullYear() + "-" + strMonth + "-" + d.getDate();
+
+        var theDay = d.getDate();
+        var strDay = theDay.toString()
+        if (theDay < 10) {
+            strDay = "0" + theDay.toString();
+        }
+
+        var theDate = d.getFullYear() + "-" + strMonth + "-" + strDay;
 
         var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const ResponseResult = require("../models/responseresult");
 const router = express.Router();
+const DenunciaController = require("../controllers/denunciaCtrl");
 
 const { storage } = require("../database/cloudStorage");
 const { ref, uploadString, getDownloadURL } = require("firebase/storage");
@@ -49,6 +50,32 @@ router.post("/downloadImg", async function (req, res) {
         response.ok = true;
         response.data = txtImg;
         response.msg = "Test ejecutado correctamente";
+    } catch (e) {
+        response.ok = false;
+        response.msg = "Excepcion: " + e;
+    }
+
+    return res.status(200).send(response.getResponseData());
+});
+
+router.get("/tiposDenuncia", async function (req, res) {
+    var response = new ResponseResult();
+
+    try {
+        response = await DenunciaController.obtenerTipoDenuncia();
+    } catch (e) {
+        response.ok = false;
+        response.msg = "Excepcion: " + e;
+    }
+
+    return res.status(200).send(response.getResponseData());
+});
+
+router.post("/registrarDenuncia", async function (req, res) {
+    var response = new ResponseResult();
+
+    try {
+        response = await DenunciaController.registrarDenuncia(req.body);
     } catch (e) {
         response.ok = false;
         response.msg = "Excepcion: " + e;
