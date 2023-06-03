@@ -102,11 +102,38 @@ class DenunciaController {
         for (let i = 0; i < snap.docs.length; i++) {
             var den = new Denuncia();
             den.getFromDb(snap.docs[i].data());
+            den.denFecha = snap.docs[i].data().denFecha;
+            den.denHora = snap.docs[i].data().denHora;
+            den.denId = snap.docs[i].id;
             denuncias.push(den);
         }
         response.ok = true;
         response.msg = "Denuncias obtenidas correctamente";
         response.data = denuncias;
+        return response;
+    }
+
+    static async obtenerDetalleDenuncia(denId) {
+        var response = new ResponseResult();
+
+        const denRef = db.collection("denuncias").doc(denId);
+        const doc = await denRef.get();
+        if (!doc.exists) {
+            response.ok = false;
+            response.msg = "No existe denuncia";
+            return response;
+        }
+
+        console.log("got denuncia");
+        var denunciaObj = new Denuncia();
+        denunciaObj.getFromDbAll(doc.data());
+        console.log("denuncia initialized");
+        denunciaObj.denId = doc.id;
+
+        response.ok = true;
+        response.msg = "Denuncia obtenida correctamente";
+        response.data = denunciaObj;
+
         return response;
     }
 

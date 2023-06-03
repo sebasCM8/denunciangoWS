@@ -2,11 +2,23 @@ class GenericOps {
     constructor() { }
 
     static calculateMinutes(fIni, fFin) {
-        var dateIni = new Date(fIni.substring(0, 4), fIni.substring(5, 7), fIni.substring(8, 10),
-            fIni.substring(11, 13), fIni.substring(14, 16), fIni.substring(17));
+        var fIniParts = fIni.split(" ");
+        var fIniFecha = fIniParts[0];
+        var fIniHora = fIniParts[1];
+        var fIniFechaParts = fIniFecha.split("-");
+        var fIniHoraParts = fIniHora.split(":");
+        var fIniMes = parseInt(fIniFechaParts[1]) - 1;
+        var dateIni = new Date(fIniFechaParts[0], fIniMes.toString(), fIniFechaParts[2],
+            fIniHoraParts[0], fIniHoraParts[1], fIniHoraParts[2]);
 
-        var dateFin = new Date(fFin.substring(0, 4), fFin.substring(5, 7), fFin.substring(8, 10),
-            fFin.substring(11, 13), fFin.substring(14, 16), fFin.substring(17));
+        var fFinParts = fFin.split(" ");
+        var fFinFecha = fFinParts[0];
+        var fFinHora = fFinParts[1];
+        var fFinFechaParts = fFinFecha.split("-");
+        var fFinHoraParts = fFinHora.split(":");
+        var fFinMes = parseInt(fFinFechaParts[1]) - 1;
+        var dateFin = new Date(fFinFechaParts[0], fFinMes.toString(), fFinFechaParts[2],
+            fFinHoraParts[0], fFinHoraParts[1], fFinHoraParts[2]);
 
         var miliSecDiff = dateFin - dateIni;
         var secs = Math.floor(miliSecDiff / 1000);
@@ -18,18 +30,9 @@ class GenericOps {
     static getDateTime() {
         var d = new Date();
         var theMonth = d.getMonth() + 1;
-        var strMonth = theMonth.toString();
-        if (theMonth < 10) {
-            strMonth = "0" + theMonth.toString();
-        }
-
         var theDay = d.getDate();
-        var strDay = theDay.toString()
-        if (theDay < 10) {
-            strDay = "0" + theDay.toString();
-        }
 
-        var theDate = d.getFullYear() + "-" + strMonth + "-" + strDay;
+        var theDate = d.getFullYear() + "-" + theMonth.toString() + "-" + theDay.toString();
 
         var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 

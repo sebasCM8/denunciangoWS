@@ -27,8 +27,21 @@ class Denuncia {
         this.denLng = denData.denLng;
     }
 
+    getFromDbAll(denData) {
+        this.denTitulo = denData.denTitulo;
+        this.denDescripcion = denData.denDescripcion;
+        this.denTipo = denData.denTipo;
+        this.denUsu = denData.denUsu;
+        this.denEstado = denData.denEstado;
+        this.denFecha = denData.denFecha;
+        this.denHora = denData.denHora;
+        this.denLat = denData.denLat;
+        this.denLng = denData.denLng;
+    }
+
     toDbmap() {
         var data = {
+            denId: this.denId,
             denTitulo: this.denTitulo,
             denDescripcion: this.denDescripcion,
             denTipo: this.denTipo,

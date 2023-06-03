@@ -98,5 +98,18 @@ router.post("/usuarioDenuncias", async function (req, res) {
 });
 
 
+router.post("/obtenerDetDen", async function (req, res) {
+    var response = new ResponseResult();
+
+    try {
+        response = await DenunciaController.obtenerDetalleDenuncia(req.body.denId);
+    } catch (e) {
+        response.ok = false;
+        response.msg = "Excepcion: " + e;
+    }
+
+    return res.status(200).send(response.getResponseData());
+});
+
 
 module.exports = router;
