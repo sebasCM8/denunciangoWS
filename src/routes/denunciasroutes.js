@@ -1,6 +1,5 @@
 const express = require("express");
 const ResponseResult = require("../models/responseresult");
-const DenunciaCtrl = require("../controllers/denunciasCtrl");
 const router = express.Router();
 const DenunciaController = require("../controllers/denunciaCtrl");
 
@@ -60,86 +59,57 @@ router.post("/downloadImg", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
-
-
-router.get("/denunciaPaso1", async function (req, res) {
-  var response = new ResponseResult();
-  try {
-    response = await DenunciaCtrl.denunciaPaso1("Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución. negro"
-    );
-
-  } catch (e) {
-    response.ok = false;
-    response.msg = "Excepcion en denuncia paso 1: " + e;
-  }
-  return res.status(200).send(response.getResponseData());
-});
-
-
-router.get("/denunciaPaso2", async function (req, res) {
-  var response = new ResponseResult();
-  try {
-    const fs = require("fs");
-    const img = fs.readFileSync("imgns/i1.jpg").toString("base64");
-    response = await DenunciaCtrl.denunciaPaso2(img);
-  } catch (e) {
-    response.ok = false;
-    response.msg = "Excepcion en denuncia paso 2: " + e;
-  }
-  return res.status(200).send(response.getResponseData());
-});
-
 router.get("/tiposDenuncia", async function (req, res) {
-    var response = new ResponseResult();
+  var response = new ResponseResult();
 
-    try {
-        response = await DenunciaController.obtenerTipoDenuncia();
-    } catch (e) {
-        response.ok = false;
-        response.msg = "Excepcion: " + e;
-    }
+  try {
+    response = await DenunciaController.obtenerTipoDenuncia();
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
 
-    return res.status(200).send(response.getResponseData());
+  return res.status(200).send(response.getResponseData());
 });
 
 router.post("/registrarDenuncia", async function (req, res) {
-    var response = new ResponseResult();
+  var response = new ResponseResult();
 
-    try {
-        response = await DenunciaController.registrarDenuncia(req.body);
-    } catch (e) {
-        response.ok = false;
-        response.msg = "Excepcion: " + e;
-    }
+  try {
+    response = await DenunciaController.registrarDenuncia(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
 
-    return res.status(200).send(response.getResponseData());
+  return res.status(200).send(response.getResponseData());
 });
 
 router.post("/usuarioDenuncias", async function (req, res) {
-    var response = new ResponseResult();
+  var response = new ResponseResult();
 
-    try {
-        response = await DenunciaController.obtenerDenunciasUsu(req.body.usuEmail);
-    } catch (e) {
-        response.ok = false;
-        response.msg = "Excepcion: " + e;
-    }
+  try {
+    response = await DenunciaController.obtenerDenunciasUsu(req.body.usuEmail);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
 
-    return res.status(200).send(response.getResponseData());
+  return res.status(200).send(response.getResponseData());
 });
 
 
 router.post("/obtenerDetDen", async function (req, res) {
-    var response = new ResponseResult();
+  var response = new ResponseResult();
 
-    try {
-        response = await DenunciaController.obtenerDetalleDenuncia(req.body.denId);
-    } catch (e) {
-        response.ok = false;
-        response.msg = "Excepcion: " + e;
-    }
+  try {
+    response = await DenunciaController.obtenerDetalleDenuncia(req.body.denId);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
 
-    return res.status(200).send(response.getResponseData());
+  return res.status(200).send(response.getResponseData());
 });
 
 

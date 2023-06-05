@@ -4,8 +4,11 @@ const { dbDos } = require("../database/firestoreDos");
 const { collection, query, where, getDocs, doc, getDoc } = require("firebase/firestore");
 const TipoDenuncia = require("../models/tipoDenuncia");
 const Denuncia = require("../models/denuncia");
-const GenericOps = require("../models/genericops");
+const GenericOps = require("../helpers/genericops");
 const encode = require("hashcode").hashCode;
+
+const tieneContenidoOfensivo = require("../helpers/openaiUtils");
+const { detectarEtiquetas } = require("../helpers/awsUtils");
 
 
 const { storage } = require("../database/cloudStorage");
@@ -39,7 +42,6 @@ class DenunciaController {
     }
 
     static async registrarDenuncia(denData) {
-        console.log(denData);
         var response = new ResponseResult();
 
         var denObj = new Denuncia();
@@ -60,6 +62,14 @@ class DenunciaController {
             return response;
         }
 
+        //CHATGPT DESCRIPTION VALIDATION
+        var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
+        if (esOfensivo) {
+            response.ok = false;
+            response.msg = "La descripcion tiene contenido ofensivo";
+            return response;
+        }
+
         var denInfo = denObj.denUsu + denObj.denTitulo + denObj.denDescripcion;
         var hash = encode().value(denInfo);
 
@@ -74,7 +84,28 @@ class DenunciaController {
         denObj.denFecha = partesFecha[0];
         denObj.denHora = partesFecha[1];
         denObj.denEstado = 1;
-        //await setDoc(doc(db, "denuncias", hash.toString()), denObj.toDbmap());
+
+        //AWS IMAGE VALIDATION
+        for (let i2 = 0; i2 < denData.images.length; i2++) {
+            var b64Img = denData.images[i2];
+            let allEtiquetas;
+            await detectarEtiquetas(b64Img)
+                .then((etiquetas) => {
+                    allEtiquetas = etiquetas;
+                })
+                .catch(() => {
+                    response.ok = false;
+                    response.msg = "Error al obtener etiquetas";
+                    return response;
+                });
+
+            let categoria = this.clasificarImagen(allEtiquetas);
+            if (categoria != denObj.denTipo) {
+                response.ok = false;
+                response.msg = "Su imagen no corresponde con el tipo de denuncia";
+                return response;
+            }
+        }
 
         var denImagenes = "";
         for (let i = 0; i < denData.images.length; i++) {
@@ -135,6 +166,54 @@ class DenunciaController {
         response.data = denunciaObj;
 
         return response;
+    }
+
+    static clasificarImagen(etiquetas) {
+        let cBasura = 0;
+        let cAreaVerde = 0;
+        let cAlumbrado = 0;
+        let cCalle = 0;
+        etiquetas.forEach((unaEtiqueta) => {
+
+            if (unaEtiqueta.Name === "Garbage" && unaEtiqueta.Confidence >= 87) cBasura++;
+            if (unaEtiqueta.Name === "Trash" && unaEtiqueta.Confidence >= 87) cBasura++;
+
+            if (unaEtiqueta.Name === "Grass" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+            if (unaEtiqueta.Name === "Park" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+            if (unaEtiqueta.Name === "Tree" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+            if (unaEtiqueta.Name === "Nature" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+            if (unaEtiqueta.Name === "Plant" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+            if (unaEtiqueta.Name === "Vegetation" && unaEtiqueta.Confidence >= 87) cAreaVerde++;
+
+            if (unaEtiqueta.Name === "Utility Pole" && unaEtiqueta.Confidence >= 87) cAlumbrado++;
+            if (unaEtiqueta.Name === "Lamp Post" && unaEtiqueta.Confidence >= 87) cAlumbrado++;
+            if (unaEtiqueta.Name === "Lighting" && unaEtiqueta.Confidence >= 87) cAlumbrado++;
+            if (unaEtiqueta.Name === "Flare" && unaEtiqueta.Confidence >= 87) cAlumbrado++;
+
+            if (unaEtiqueta.Name === "Road" && unaEtiqueta.Confidence >= 87) cCalle++;
+            if (unaEtiqueta.Name === "Street" && unaEtiqueta.Confidence >= 87) cCalle++;
+            if (unaEtiqueta.Name === "Hole" && unaEtiqueta.Confidence >= 87) cCalle++;
+            if (unaEtiqueta.Name === "Tar" && unaEtiqueta.Confidence >= 87) cCalle++;
+        });
+
+        if (cBasura === 2) {
+            //Servicio de Basura
+            return 3;
+        }
+        if (cAreaVerde >= 3) {
+            //Area verde
+            return 1;
+        }
+        if (cAlumbrado >= 2) {
+            //Alumbrado
+            return 4;
+        }
+        if (cCalle >= 2) {
+            //Via publica
+            return 2;
+        }
+
+        return 0;
     }
 
 }
