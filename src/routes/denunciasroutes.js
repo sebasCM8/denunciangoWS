@@ -64,7 +64,7 @@ router.post("/downloadImg", async function (req, res) {
 router.get("/denunciaPaso1", async function (req, res) {
   var response = new ResponseResult();
   try {
-    response = await DenunciaCtrl.denunciaPaso1("Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución. Malditos hdp"
+    response = await DenunciaCtrl.denunciaPaso1("Quiero hacer una denuncia acerca de mi calle, esta con baches ya hace un mes, y no nos dan una solución. negro"
     );
 
   } catch (e) {
@@ -79,7 +79,7 @@ router.get("/denunciaPaso2", async function (req, res) {
   var response = new ResponseResult();
   try {
     const fs = require("fs");
-    const img = fs.readFileSync("imgns/i7.jpg").toString("base64");
+    const img = fs.readFileSync("imgns/i1.jpg").toString("base64");
     response = await DenunciaCtrl.denunciaPaso2(img);
   } catch (e) {
     response.ok = false;
