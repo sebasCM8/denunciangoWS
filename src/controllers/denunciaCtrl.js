@@ -13,6 +13,7 @@ const { detectarEtiquetas } = require("../helpers/awsUtils");
 
 const { storage } = require("../database/cloudStorage");
 const { ref, uploadString, getDownloadURL } = require("firebase/storage");
+const estados = require("./estadosCtrl");
 
 class DenunciaController {
 
@@ -83,7 +84,7 @@ class DenunciaController {
 
         denObj.denFecha = partesFecha[0];
         denObj.denHora = partesFecha[1];
-        denObj.denEstado = 1;
+        denObj.denEstado = 1; // 1 ES ESTADO PENDIENTE
 
         //AWS IMAGE VALIDATION
         for (let i2 = 0; i2 < denData.images.length; i2++) {
@@ -129,13 +130,29 @@ class DenunciaController {
         const denRef = db.collection("denuncias").where("denUsu", "==", usuEmail);
         const snap = await denRef.get();
 
+        const tdRef = db.collection("tipoDenuncia");
+        const tdSnap = await tdRef.get();
+
         var denuncias = [];
         for (let i = 0; i < snap.docs.length; i++) {
             var den = new Denuncia();
-            den.getFromDb(snap.docs[i].data());
+            den.getFromDbAll(snap.docs[i].data());
             den.denFecha = snap.docs[i].data().denFecha;
             den.denHora = snap.docs[i].data().denHora;
             den.denId = snap.docs[i].id;
+
+            for (let itd = 0; itd < tdSnap.docs.length; itd++) {
+                if (den.denTipo == tdSnap.docs[itd].id) {
+                    den.denTdTitulo = tdSnap.docs[itd].data().tdTitulo;
+                }
+            }
+
+            for (let iest = 0; iest < estados.length; iest++) {
+                if (estados[iest].estId == den.denEstado) {
+                    den.denEstTitulo = estados[iest].estTitulo;
+                }
+            }
+
             denuncias.push(den);
         }
         response.ok = true;

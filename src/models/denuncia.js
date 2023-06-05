@@ -12,6 +12,9 @@ class Denuncia {
         this.denLat = "";
         this.denLng = "";
         this.denImagenes = "";
+
+        this.denTdTitulo = ""; //ATTRIBUTE USED JUST FOR USU DENUNCIAS RESPONSE
+        this.denEstTitulo = ""; //ATTRIBUTE USED JUST FOR USU DENUNCIAS RESPONSE
     }
 
     getFromDb(denData) {
