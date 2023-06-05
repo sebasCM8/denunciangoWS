@@ -1,11 +1,11 @@
-const GenericOps = require("../models/genericops");
+const GenericOps = require("../helpers/genericops");
 const ResponseResult = require("../models/responseresult");
 const Usuario = require("../models/usuario");
 const { db } = require("../database/firestore");
 const ParametrosController = require("./parametrosCtrl");
 const Image = require("../models/image");
 const sendEmail = require("../helpers/sendGridUtils");
-const compareFaces = require("../helpers/awsUtils");
+const {compareFaces} = require("../helpers/awsUtils");
 
 class UsuarioCtrl {
     constructor() { }
