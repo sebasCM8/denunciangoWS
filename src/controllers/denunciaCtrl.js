@@ -14,7 +14,8 @@ const { detectarEtiquetas } = require("../helpers/awsUtils");
 const { storage } = require("../database/cloudStorage");
 const { ref, uploadString, getDownloadURL } = require("firebase/storage");
 const estados = require("./estadosCtrl");
-const { ResourceExplorer2 } = require("aws-sdk");
+
+const axios = require("axios");
 
 class DenunciaController {
 
@@ -181,9 +182,30 @@ class DenunciaController {
             }
         }
 
+        //GETTING TIPOS DENUNCIA
+        if (tdSnap.empty) {
+            response.ok = false;
+            response.msg = "No existen tipos denuncia";
+            return response;
+        }
+
+        var tiposDenuncia = [];
+        for (let i = 0; i < tdSnap.docs.length; i++) {
+            var td = new TipoDenuncia();
+            td.tdId = tdSnap.docs[i].id;
+            td.tdTitulo = tdSnap.docs[i].data().tdTitulo;
+            tiposDenuncia.push(td);
+        }
+
+        var respData = {
+            tds: tiposDenuncia,
+            ests: estados,
+            denuncias: denuncias
+        };
+
         response.ok = true;
         response.msg = "Denuncias obtenidas correctamente";
-        response.data = denuncias;
+        response.data = respData;
         return response;
     }
 
@@ -198,15 +220,37 @@ class DenunciaController {
             return response;
         }
 
-        console.log("got denuncia");
         var denunciaObj = new Denuncia();
         denunciaObj.getFromDbAll(doc.data());
-        console.log("denuncia initialized");
         denunciaObj.denId = doc.id;
+
+        var imgNames = denunciaObj.denImagenes.split(",");
+        var denImagenes = [];
+        for (let i = 0; i < imgNames.length; i++) {
+            if (imgNames[i] != " ") {
+                var imgName = imgNames[i].trim();
+                const storageRef = ref(storage, imgName);
+                var url = await getDownloadURL(storageRef);
+                await axios
+                    .get(url)
+                    .then((response) => {
+                        denImagenes.push(response.data);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        response.ok = false;
+                        response.msg = "Excepcion en img cloud storage: " + error;
+                        return response;
+                    });
+            }
+        }
 
         response.ok = true;
         response.msg = "Denuncia obtenida correctamente";
-        response.data = denunciaObj;
+        response.data = {
+            den: denunciaObj,
+            denImagenes: denImagenes
+        };
 
         return response;
     }

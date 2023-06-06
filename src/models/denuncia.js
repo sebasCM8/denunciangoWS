@@ -40,6 +40,7 @@ class Denuncia {
         this.denHora = denData.denHora;
         this.denLat = denData.denLat;
         this.denLng = denData.denLng;
+        this.denImagenes = denData.denImagenes;
     }
 
     toDbmap() {
