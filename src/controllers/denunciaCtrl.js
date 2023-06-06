@@ -14,6 +14,7 @@ const { detectarEtiquetas } = require("../helpers/awsUtils");
 const { storage } = require("../database/cloudStorage");
 const { ref, uploadString, getDownloadURL } = require("firebase/storage");
 const estados = require("./estadosCtrl");
+const { ResourceExplorer2 } = require("aws-sdk");
 
 class DenunciaController {
 
@@ -39,6 +40,16 @@ class DenunciaController {
         response.ok = true;
         response.data = tiposDenuncia;
         response.msg = "Tipos de denuncias obtenidos";
+        return response;
+    }
+
+    static async obtenerEstadosDenuncia() {
+        var response = new ResponseResult();
+
+        response.ok = true;
+        response.msg = "Estados de denuncia obtenidos correctamente";
+        response.data = estados;
+
         return response;
     }
 
@@ -155,6 +166,21 @@ class DenunciaController {
 
             denuncias.push(den);
         }
+
+        for (let i1 = 0; i1 < (denuncias.length - 1); i1++) {
+            for (let i2 = (i1 + 1); i2 < denuncias.length; i2++) {
+                var d1Str = denuncias[i1].denFecha + " " + denuncias[i1].denHora;
+                var d1 = GenericOps.initializeDate(d1Str);
+                var d2Str = denuncias[i2].denFecha + " " + denuncias[i2].denHora;
+                var d2 = GenericOps.initializeDate(d2Str);
+                if (d2 > d1) {
+                    var xden = denuncias[i1];
+                    denuncias[i1] = denuncias[i2];
+                    denuncias[i2] = xden;
+                }
+            }
+        }
+
         response.ok = true;
         response.msg = "Denuncias obtenidas correctamente";
         response.data = denuncias;

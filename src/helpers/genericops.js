@@ -74,6 +74,18 @@ class GenericOps {
         return randomNumber;
     };
 
+    static initializeDate(d1) {
+        var dateParts = d1.split(" ");
+        var dateFecha = dateParts[0];
+        var dateHora = dateParts[1];
+        var dateFechaParts = dateFecha.split("-");
+        var dateHoraParts = dateHora.split(":");
+        var dateMes = parseInt(dateFechaParts[1]) - 1;
+        var dateObj = new Date(dateFechaParts[0], dateMes.toString(), dateFechaParts[2],
+            dateHoraParts[0], dateHoraParts[1], dateHoraParts[2]);
+        return dateObj;
+    }
+
 }
 
 module.exports = GenericOps;
