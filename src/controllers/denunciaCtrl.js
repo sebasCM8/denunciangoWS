@@ -78,6 +78,8 @@ class DenunciaController {
         //CHATGPT DESCRIPTION VALIDATION
         var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
         if (esOfensivo) {
+            await this.registrarDenRechazada(denObj, denData.images);
+
             response.ok = false;
             response.msg = "La descripcion tiene contenido ofensivo";
             return response;
@@ -114,6 +116,8 @@ class DenunciaController {
 
             let categoria = this.clasificarImagen(allEtiquetas);
             if (categoria != denObj.denTipo) {
+                await this.registrarDenRechazada(denObj, denData.images);
+
                 response.ok = false;
                 response.msg = "Su imagen no corresponde con el tipo de denuncia";
                 return response;
@@ -135,6 +139,27 @@ class DenunciaController {
         response.msg = "Denuncia registrada correctamente";
 
         return response;
+    }
+
+    static async registrarDenRechazada(denData, denImagenes) {
+        const ESTRECHAZADO = 0; //0 es rechazado
+        const denRef = db.collection("denuncias");
+        var denInfo = denData.denUsu + denData.denTitulo + denData.denDescripcion;
+        var hash = encode().value(denInfo);
+        var aurita = GenericOps.getDateTime();
+        var fechaParts = aurita.split(" ");
+        denData.denFecha = fechaParts[0];
+        denData.denHora = fechaParts[1];
+        var denImages = "";
+        for (let i = 0; i < denImagenes.length; i++) {
+            var imgName = hash.toString() + i.toString() + ".txt";
+            const storageRef = ref(storage, imgName);
+            await uploadString(storageRef, denImagenes[i]);
+            denImages += imgName + ", ";
+        }
+        denData.denImagenes = denImages;
+        denData.denEstado = ESTRECHAZADO;
+        await denRef.doc(hash.toString()).set(denData.toDbmap());
     }
 
     static async obtenerDenunciasUsu(usuEmail) {
@@ -301,6 +326,71 @@ class DenunciaController {
         }
 
         return 0;
+    }
+
+    static async obtenerDenuncias() {
+        var response = new ResponseResult();
+
+        const denRef = db.collection("denuncias");
+        const snap = await denRef.get();
+
+        const tdRef = db.collection("tipoDenuncia");
+        const tdSnap = await tdRef.get();
+
+        var denuncias = [];
+        for (let i = 0; i < snap.docs.length; i++) {
+            var den = new Denuncia();
+            den.getFromDbAll(snap.docs[i].data());
+            den.denId = snap.docs[i].id;
+
+            for (let itd = 0; itd < tdSnap.docs.length; itd++) {
+                if (den.denTipo == tdSnap.docs[itd].id) {
+                    den.denTdTitulo = tdSnap.docs[itd].data().tdTitulo;
+                }
+            }
+
+            for (let iest = 0; iest < estados.length; iest++) {
+                if (estados[iest].estId == den.denEstado) {
+                    den.denEstTitulo = estados[iest].estTitulo;
+                }
+            }
+
+            denuncias.push(den);
+        }
+
+        for (let i1 = 0; i1 < (denuncias.length - 1); i1++) {
+            for (let i2 = (i1 + 1); i2 < denuncias.length; i2++) {
+                var d1Str = denuncias[i1].denFecha + " " + denuncias[i1].denHora;
+                var d1 = GenericOps.initializeDate(d1Str);
+                var d2Str = denuncias[i2].denFecha + " " + denuncias[i2].denHora;
+                var d2 = GenericOps.initializeDate(d2Str);
+                if (d2 > d1) {
+                    var xden = denuncias[i1];
+                    denuncias[i1] = denuncias[i2];
+                    denuncias[i2] = xden;
+                }
+            }
+        }
+
+
+        var tiposDenuncia = [];
+        for (let i = 0; i < tdSnap.docs.length; i++) {
+            var td = new TipoDenuncia();
+            td.tdId = tdSnap.docs[i].id;
+            td.tdTitulo = tdSnap.docs[i].data().tdTitulo;
+            tiposDenuncia.push(td);
+        }
+
+        var respData = {
+            tds: tiposDenuncia,
+            ests: estados,
+            denuncias: denuncias
+        };
+
+        response.ok = true;
+        response.msg = "Denuncias obtenidas correctamente";
+        response.data = respData;
+        return response;
     }
 
 }

@@ -123,5 +123,16 @@ router.get("/obtenerEstadosDenuncia", async function (req, res) {
   res.status(200).send(response);
 });
 
+router.get("/obtenerDenuncias", async function (req, res) {
+  var response = new ResponseResult();
+  try {
+    response = await DenunciaController.obtenerDenuncias();
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
+  res.status(200).send(response);
+});
+
 
 module.exports = router;
