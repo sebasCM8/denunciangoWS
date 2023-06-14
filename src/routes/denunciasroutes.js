@@ -120,7 +120,7 @@ router.get("/obtenerEstadosDenuncia", async function (req, res) {
     response.ok = false;
     response.msg = "Excepcion: " + e;
   }
-  res.status(200).send(response);
+  return res.status(200).send(response);
 });
 
 router.get("/obtenerDenuncias", async function (req, res) {
@@ -131,7 +131,7 @@ router.get("/obtenerDenuncias", async function (req, res) {
     response.ok = false;
     response.msg = "Excepcion: " + e;
   }
-  res.status(200).send(response);
+  return res.status(200).send(response);
 });
 
 
