@@ -5,7 +5,9 @@ const { db } = require("../database/firestore");
 const ParametrosController = require("./parametrosCtrl");
 const Image = require("../models/image");
 const sendEmail = require("../helpers/sendGridUtils");
-const {compareFaces} = require("../helpers/awsUtils");
+const { compareFaces } = require("../helpers/awsUtils");
+const Rol = require("../models/rol");
+const RolUsu = require("../models/rolusu");
 
 class UsuarioCtrl {
     constructor() { }
@@ -306,6 +308,78 @@ class UsuarioCtrl {
         response.data = docId;
 
         return response;
+    }
+
+    static async registrarFuncionario(data) {
+        var result = new ResponseResult();
+
+        var theusu = new Usuario();
+        theusu.usuNombre = data.usuNombre;
+        theusu.usuPaterno = data.usuPaterno;
+        theusu.usuMaterno = data.usuMaterno;
+        theusu.usuCI = data.usuCI;
+        theusu.usuEmail = data.usuEmail;
+        theusu.usuPass = data.usuPass;
+        theusu.usuFechaBloqueo = "";
+        theusu.usuFechaUltPass = GenericOps.getDateTime();
+        var usuExiste = await db.collection("usuarios").where("usuEmail", "==", theusu.usuEmail).get();
+        if (usuExiste.empty) {
+            await db.collection("usuarios").add(theusu.toApiResp());
+        }
+
+        var regFunc = await db.collection("rolusu").
+            where("ruEstado", "==", 1).
+            where("ruUsu", "==", theusu.usuEmail).
+            where("ruRol", "==", Rol.FUNCIONARIO).get();
+        if (!regFunc.empty) {
+            result.ok = false;
+            result.msg = "El usuario ya esta registrado como funcionario";
+            return result;
+        }
+
+        var ru = new RolUsu();
+        ru.ruUsu = theusu.usuEmail;
+        ru.ruRol = Rol.FUNCIONARIO;
+        ru.ruEstado = 1;
+        await db.collection("rolusu").add(ru.toFirestore());
+
+        result.ok = true;
+        result.msg = "El usuario se registro como funcionario exitosamente";
+
+        return result;
+    }
+
+    static async loginWeb(data){
+        var result = new ResponseResult();
+
+        var email = data.usuEmail;
+        var pass = data.usuPass;
+        var usudb = await db.collection("usuarios").where("usuEmail", "==", email).get();
+        if(usudb.empty){
+            result.ok = false;
+            result.msg = "Datos incorrectos";
+            return result;
+        }
+
+        var theUsu = new Usuario();
+        theUsu.getFromDb(usudb.docs[0].data());
+        if(theUsu.usuPass != pass){
+            result.ok = false;
+            result.msg = "Datos incorrectos";
+            return result;
+        }
+
+        var regTrab = await db.collection("rolusu").where("ruUsu", "==", email).get();
+        if(regTrab.empty){
+            result.ok = false;
+            result.msg = "Usuario no es funcionario o administrador";
+            return result;
+        }
+
+        result.ok = true;
+        result.msg = "Login exitoso";
+
+        return result;
     }
 }
 
