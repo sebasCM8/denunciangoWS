@@ -8,9 +8,9 @@ class UsuAre {
 
     toFirestore() {
         var obj = {
-            uaUsu: uaUsu,
-            uaAre: uaAre,
-            uaEstado: uaEstado
+            uaUsu: this.uaUsu,
+            uaAre: this.uaAre,
+            uaEstado: this.uaEstado
         };
         return obj;
     }

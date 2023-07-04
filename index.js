@@ -28,6 +28,7 @@ app.use(bodyparser.json({ limit: "15mb" }));
 app.use("/api", require("./src/routes/usuariosroutes"));
 app.use("/api", require("./src/routes/denunciasroutes"));
 app.use("/api", require("./src/routes/arearoutes"));
+app.use("/api", require("./src/routes/tipodenunciaroutes"));
 
 //Start Server
 server.listen(app.get("port"), () => {

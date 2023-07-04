@@ -129,4 +129,26 @@ router.post("/registrarPasoFinal", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
+router.post("/usuRegistrarFuncionario", async function (req, res) {
+  var response = new ResponseResult();
+  try {
+    response = await UsuarioCtrl.registrarFuncionario(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion al registrar funcionario: " + e;
+  }
+  return res.status(200).send(response);
+});
+
+router.post("/usuLoginTrabajador", async function (req, res) {
+  var response = new ResponseResult();
+  try {
+    response = await UsuarioCtrl.loginWeb(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion al solicitar ingreso: " + e;
+  }
+  return res.status(200).send(response);
+});
+
 module.exports = router;
