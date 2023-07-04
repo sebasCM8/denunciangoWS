@@ -8,6 +8,7 @@ const sendEmail = require("../helpers/sendGridUtils");
 const { compareFaces } = require("../helpers/awsUtils");
 const Rol = require("../models/rol");
 const RolUsu = require("../models/rolusu");
+const UsuAre = require("../models/usuare");
 
 class UsuarioCtrl {
     constructor() { }
@@ -343,19 +344,25 @@ class UsuarioCtrl {
         ru.ruEstado = 1;
         await db.collection("rolusu").add(ru.toFirestore());
 
+        var ua = new UsuAre();
+        ua.uaUsu = theusu.usuEmail;
+        ua.uaAre = data.areId;
+        ua.uaEstado = 1;
+        await db.collection("usuare").add(ua.toFirestore());
+
         result.ok = true;
         result.msg = "El usuario se registro como funcionario exitosamente";
 
         return result;
     }
 
-    static async loginWeb(data){
+    static async loginWeb(data) {
         var result = new ResponseResult();
 
         var email = data.usuEmail;
         var pass = data.usuPass;
         var usudb = await db.collection("usuarios").where("usuEmail", "==", email).get();
-        if(usudb.empty){
+        if (usudb.empty) {
             result.ok = false;
             result.msg = "Datos incorrectos";
             return result;
@@ -363,14 +370,16 @@ class UsuarioCtrl {
 
         var theUsu = new Usuario();
         theUsu.getFromDb(usudb.docs[0].data());
-        if(theUsu.usuPass != pass){
+        if (theUsu.usuPass != pass) {
             result.ok = false;
             result.msg = "Datos incorrectos";
             return result;
         }
 
-        var regTrab = await db.collection("rolusu").where("ruUsu", "==", email).get();
-        if(regTrab.empty){
+        var regTrab = await db.collection("rolusu").
+            where("ruEstado", "==", 1).
+            where("ruUsu", "==", email).get();
+        if (regTrab.empty) {
             result.ok = false;
             result.msg = "Usuario no es funcionario o administrador";
             return result;
