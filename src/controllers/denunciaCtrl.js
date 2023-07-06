@@ -5,6 +5,7 @@ const { collection, query, where, getDocs, doc, getDoc } = require("firebase/fir
 const TipoDenuncia = require("../models/tipoDenuncia");
 const Denuncia = require("../models/denuncia");
 const GenericOps = require("../helpers/genericops");
+const DenReview = require("../models/denReview");
 const encode = require("hashcode").hashCode;
 
 const tieneContenidoOfensivo = require("../helpers/openaiUtils");
@@ -420,10 +421,50 @@ class DenunciaController {
             usuMaterno: usuario.usuMaterno,
             usuEmail: usuario.usuEmail,
             usuDireccion: usuario.usuDireccion,
-            usuFoto: imageSegip 
+            usuFoto: imageSegip
         };
         return response;
-        
+
+    }
+
+    static async rechazarDenuncia(data) {
+        var result = new ResponseResult();
+
+        data.drFunc = "pedroperez@gmail.com";
+        var review = new DenReview();
+        review.fromWebCambio(data);
+        review.drEstado = 1;
+
+        const ESTADORECHAZADO = 0; //0 es rechazada
+        await db.collection("denuncias").doc(review.drDen).update({
+            "denEstado": ESTADORECHAZADO
+        });
+
+        await db.collection("denReview").add(review.toFirestore());
+        result.ok = true;
+        result.msg = "Se rechazo la denuncia correctamente";
+
+        return result;
+    }
+
+    static async aceptarDenuncia(data) {
+        var result = new ResponseResult();
+
+        data.drFunc = "pedroperez@gmail.com";
+        var review = new DenReview();
+        review.fromWebCambio(data);
+        review.drEstado = 1;
+
+        const ESTADOACEPTADO = 2; //2 es aceptado
+        await db.collection("denuncias").doc(review.drDen).update({
+            "denEstado": ESTADOACEPTADO
+        });
+
+        await db.collection("denReview").add(review.toFirestore());
+        result.ok = true;
+        result.msg = "Se aprobo la denuncia correctamente";
+
+        return result;
     }
 
 }

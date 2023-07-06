@@ -148,4 +148,28 @@ router.post("/propietarioDen", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
+router.post("/denRechazarDen", async function (req, res) {
+  var response = new ResponseResult();
+
+  try {
+    response = await DenunciaController.rechazarDenuncia(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion al rechazar den: " + e;
+  }
+  return res.status(200).send(response);
+});
+
+router.post("/denAceptarDen", async function (req, res) {
+  var response = new ResponseResult();
+
+  try {
+    response = await DenunciaController.aceptarDenuncia(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion al rechazar den: " + e;
+  }
+  return res.status(200).send(response);
+});
+
 module.exports = router;
