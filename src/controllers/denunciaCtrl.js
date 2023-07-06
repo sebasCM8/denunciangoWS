@@ -16,6 +16,8 @@ const { ref, uploadString, getDownloadURL } = require("firebase/storage");
 const estados = require("./estadosCtrl");
 
 const axios = require("axios");
+const Usuario = require("../models/usuario");
+const Image = require("../models/image");
 
 class DenunciaController {
 
@@ -391,6 +393,37 @@ class DenunciaController {
         response.msg = "Denuncias obtenidas correctamente";
         response.data = respData;
         return response;
+    }
+
+
+
+    static async obtenerPropietarioDen(usuEmail) {
+        var response = new ResponseResult();
+        var usuDb = await db.collection("usuarios").where("usuEmail", "==", usuEmail).get();
+        if (usuDb.empty) {
+            response.ok = false;
+            response.msg = "No existe el usuario";
+            return response;
+        }
+
+        var usuario = new Usuario();
+        usuario.getFromDb(usuDb.docs[0].data());
+        const userSegip = await Image.findOne({ ci: usuario.usuCI });
+        const imageSegip = userSegip.imageData.toString("base64");
+
+        response.ok = true;
+        response.msg = "Usuario encontrado"
+        response.data = {
+            usuCI: usuario.usuCI,
+            usuNombre: usuario.usuNombre,
+            usuPaterno: usuario.usuPaterno,
+            usuMaterno: usuario.usuMaterno,
+            usuEmail: usuario.usuEmail,
+            usuDireccion: usuario.usuDireccion,
+            usuFoto: imageSegip 
+        };
+        return response;
+        
     }
 
 }

@@ -9,3 +9,7 @@ iisnode
 guardarImagenMongo.txt
 firebaseConfigObj.js
 firestoreDos.js
+
+.dockerignore
+Dockerfile
+fly.toml

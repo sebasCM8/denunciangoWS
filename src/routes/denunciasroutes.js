@@ -135,4 +135,17 @@ router.get("/obtenerDenuncias", async function (req, res) {
 });
 
 
+router.post("/propietarioDen", async function (req, res) {
+  var response = new ResponseResult();
+
+  try {
+    response = await DenunciaController.obtenerPropietarioDen(req.body.usuEmail);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion: " + e;
+  }
+
+  return res.status(200).send(response.getResponseData());
+});
+
 module.exports = router;
