@@ -79,15 +79,15 @@ class DenunciaController {
         }
 
         //CHATGPT DESCRIPTION VALIDATION
-        var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
+        /*var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
         if (esOfensivo) {
             await this.registrarDenRechazada(denObj, denData.images);
 
             response.ok = false;
             response.msg = "La descripcion tiene contenido ofensivo";
             return response;
-        }
-
+        }*/
+        
         var denInfo = denObj.denUsu + denObj.denTitulo + denObj.denDescripcion;
         var hash = encode().value(denInfo);
 
