@@ -264,6 +264,7 @@ class UsuarioCtrl {
                     "Error al enviar el correo con el codigo de verificacion";
                 return response;
             });
+        
         response.ok = true;
         response.msg = "Codigo de verificacion enviado";
         response.data = code;

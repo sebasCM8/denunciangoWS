@@ -72,7 +72,7 @@ router.get("/tiposDenuncia", async function (req, res) {
   return res.status(200).send(response.getResponseData());
 });
 
-router.post("/registrarDenuncia", async function (req, res) {
+router.post("/denRegistrarDen", async function (req, res) {
   var response = new ResponseResult();
 
   try {
