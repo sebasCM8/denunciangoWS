@@ -151,4 +151,15 @@ router.post("/usuLoginTrabajador", async function (req, res) {
   return res.status(200).send(response);
 });
 
+router.post("/usuRegistrarToken", async function (req, res) {
+  var response = new ResponseResult();
+  try {
+    response = await UsuarioCtrl.registrarToken(req.body);
+  } catch (e) {
+    response.ok = false;
+    response.msg = "Excepcion al solicitar registrar token: " + e;
+  }
+  return res.status(200).send(response);
+});
+
 module.exports = router;

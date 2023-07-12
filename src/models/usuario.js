@@ -13,6 +13,7 @@ class Usuario {
         this.usuCantidadIntentos = 0;
         this.usuFechaBloqueo = "2023-05-13 22:27";
         this.usuFechaUltPass = "2023-05-13 22:27";
+        this.usuToken = "";
     }
 
     getFromDb(usrData) {

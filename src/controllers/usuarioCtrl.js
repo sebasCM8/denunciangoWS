@@ -264,7 +264,7 @@ class UsuarioCtrl {
                     "Error al enviar el correo con el codigo de verificacion";
                 return response;
             });
-        
+
         response.ok = true;
         response.msg = "Codigo de verificacion enviado";
         response.data = code;
@@ -291,6 +291,7 @@ class UsuarioCtrl {
             usuCantidadIntentos: 0,
             usuFechaBloqueo: "",
             usuFechaUltPass: fechaActual,
+            usuToken: ""
         };
 
         let docId;
@@ -390,6 +391,22 @@ class UsuarioCtrl {
         result.msg = "Login exitoso";
 
         return result;
+    }
+
+    static async registrarToken(data) {
+        var response = new ResponseResult();
+
+        var usuSnap = await db.collection("usuarios").where("usuEmail", "==", data.usuEmail).get();
+        var usuId = usuSnap.docs[0].id;
+
+        await db.collection("usuarios").doc(usuId).update({
+            "usuToken": data.usuToken
+        });
+
+        response.ok = true;
+        response.msg = "Token registrado exitosamente";
+
+        return response;
     }
 }
 

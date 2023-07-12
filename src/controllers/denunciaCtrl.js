@@ -1,5 +1,5 @@
 const ResponseResult = require("../models/responseresult");
-const { db } = require("../database/firestore");
+const { db, messaging } = require("../database/firestore");
 const { dbDos } = require("../database/firestoreDos");
 const { collection, query, where, getDocs, doc, getDoc } = require("firebase/firestore");
 const TipoDenuncia = require("../models/tipoDenuncia");
@@ -87,7 +87,7 @@ class DenunciaController {
             response.msg = "La descripcion tiene contenido ofensivo";
             return response;
         }*/
-        
+
         var denInfo = denObj.denUsu + denObj.denTitulo + denObj.denDescripcion;
         var hash = encode().value(denInfo);
 
@@ -441,6 +441,36 @@ class DenunciaController {
         });
 
         await db.collection("denReview").add(review.toFirestore());
+
+        var denDoc = await db.collection("denuncias").doc(review.drDen).get();
+        var usuDenEmail = denDoc.data().denUsu;
+        var usuSnap = await db.collection("usuarios").where("usuEmail", "==", usuDenEmail).get();
+        var usuDoc = usuSnap.docs[0].data();
+        var tieneToken = "usuToken" in usuDoc;
+        if (tieneToken && usuDoc.usuToken != "") {
+            var registrationToken = usuDoc.usuToken;
+            var message = {
+                data: {
+                    estado: "Denuncia rechazada",
+                    comentario: review.drComentario
+                },
+                token: registrationToken
+            };
+            await messaging.send(message)
+                .then((response) => {
+                    // Response is a message ID string.
+                    console.log('Successfully sent message:', response);
+                })
+                .catch((error) => {
+                    result.ok = false;
+                    result.msg = "Excepcion al enviar notificacion" + error;
+                    console.log('Error sending message:', error);
+                });
+            if (!result.ok) {
+                return result;
+            }
+        }
+
         result.ok = true;
         result.msg = "Se rechazo la denuncia correctamente";
 
@@ -461,6 +491,36 @@ class DenunciaController {
         });
 
         await db.collection("denReview").add(review.toFirestore());
+
+        var denDoc = await db.collection("denuncias").doc(review.drDen).get();
+        var usuDenEmail = denDoc.data().denUsu;
+        var usuSnap = await db.collection("usuarios").where("usuEmail", "==", usuDenEmail).get();
+        var usuDoc = usuSnap.docs[0].data();
+        var tieneToken = "usuToken" in usuDoc;
+        if (tieneToken && usuDoc.usuToken != "") {
+            var registrationToken = usuDoc.usuToken;
+            var message = {
+                data: {
+                    estado: "Denuncia aceptada",
+                    comentario: review.drComentario
+                },
+                token: registrationToken
+            };
+            await messaging.send(message)
+                .then((response) => {
+                    // Response is a message ID string.
+                    console.log('Successfully sent message:', response);
+                })
+                .catch((error) => {
+                    result.ok = false;
+                    result.msg = "Excepcion al enviar notificacion" + error;
+                    console.log('Error sending message:', error);
+                });
+            if (!result.ok) {
+                return result;
+            }
+        }
+
         result.ok = true;
         result.msg = "Se aprobo la denuncia correctamente";
 

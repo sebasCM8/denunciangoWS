@@ -1,6 +1,7 @@
 //FIREBASE LIBS
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const { getMessaging } = require("firebase-admin/messaging");
 
 //FIREBASE AUTH KEYS
 
@@ -12,6 +13,9 @@ initializeApp({
 
 const db = getFirestore();
 
+const messaging = getMessaging();
+
 module.exports = {
-    db: db
+    db: db,
+    messaging: messaging
 };
