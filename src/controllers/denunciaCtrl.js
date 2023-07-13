@@ -79,14 +79,14 @@ class DenunciaController {
         }
 
         //CHATGPT DESCRIPTION VALIDATION
-        /*var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
+        var esOfensivo = await tieneContenidoOfensivo(denObj.denDescripcion);
         if (esOfensivo) {
             await this.registrarDenRechazada(denObj, denData.images);
 
             response.ok = false;
             response.msg = "La descripcion tiene contenido ofensivo";
             return response;
-        }*/
+        }
 
         var denInfo = denObj.denUsu + denObj.denTitulo + denObj.denDescripcion;
         var hash = encode().value(denInfo);
@@ -104,26 +104,30 @@ class DenunciaController {
         denObj.denEstado = 1; // 1 ES ESTADO PENDIENTE
 
         //AWS IMAGE VALIDATION
-        for (let i2 = 0; i2 < denData.images.length; i2++) {
-            var b64Img = denData.images[i2];
-            let allEtiquetas;
-            await detectarEtiquetas(b64Img)
-                .then((etiquetas) => {
-                    allEtiquetas = etiquetas;
-                })
-                .catch(() => {
+        var tiposControlados = ["0Il2q9T9VRcKFfcHBSRs", "8K4c5TpJQ7TUDwgsj2Go",
+            "GKrND2lyGc3ytXKp9MIa", "NHxtpwBbEApglNuVbxv0"];
+        if (tiposControlados.includes(denObj.denTipo)) {
+            for (let i2 = 0; i2 < denData.images.length; i2++) {
+                var b64Img = denData.images[i2];
+                let allEtiquetas;
+                await detectarEtiquetas(b64Img)
+                    .then((etiquetas) => {
+                        allEtiquetas = etiquetas;
+                    })
+                    .catch(() => {
+                        response.ok = false;
+                        response.msg = "Error al obtener etiquetas";
+                        return response;
+                    });
+
+                let categoria = this.clasificarImagen(allEtiquetas);
+                if (categoria != denObj.denTipo) {
+                    await this.registrarDenRechazada(denObj, denData.images);
+
                     response.ok = false;
-                    response.msg = "Error al obtener etiquetas";
+                    response.msg = "Su imagen no corresponde con el tipo de denuncia";
                     return response;
-                });
-
-            let categoria = this.clasificarImagen(allEtiquetas);
-            if (categoria != denObj.denTipo) {
-                await this.registrarDenRechazada(denObj, denData.images);
-
-                response.ok = false;
-                response.msg = "Su imagen no corresponde con el tipo de denuncia";
-                return response;
+                }
             }
         }
 
@@ -288,6 +292,12 @@ class DenunciaController {
         let cAreaVerde = 0;
         let cAlumbrado = 0;
         let cCalle = 0;
+
+        var idViaPublica = "0Il2q9T9VRcKFfcHBSRs";
+        var idAlumbradoPublico = "8K4c5TpJQ7TUDwgsj2Go";
+        var idAreaVerde = "GKrND2lyGc3ytXKp9MIa";
+        var idServicioBasura = "NHxtpwBbEApglNuVbxv0";
+
         etiquetas.forEach((unaEtiqueta) => {
 
             if (unaEtiqueta.Name === "Garbage" && unaEtiqueta.Confidence >= 87) cBasura++;
@@ -313,22 +323,22 @@ class DenunciaController {
 
         if (cBasura === 2) {
             //Servicio de Basura
-            return 3;
+            return idServicioBasura;
         }
         if (cAreaVerde >= 3) {
             //Area verde
-            return 1;
+            return idAreaVerde;
         }
         if (cAlumbrado >= 2) {
             //Alumbrado
-            return 4;
+            return idAlumbradoPublico;
         }
         if (cCalle >= 2) {
             //Via publica
-            return 2;
+            return idViaPublica;
         }
 
-        return 0;
+        return "0";
     }
 
     static async obtenerDenuncias() {

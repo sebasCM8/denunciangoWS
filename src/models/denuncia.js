@@ -4,7 +4,7 @@ class Denuncia {
         this.denId = 0;
         this.denTitulo = "";
         this.denDescripcion = "";
-        this.denTipo = 0;
+        this.denTipo = "";
         this.denUsu = "";
         this.denEstado = 0;
         this.denFecha = "";
