@@ -469,6 +469,7 @@ class DenunciaController {
             await messaging.send(message)
                 .then((response) => {
                     // Response is a message ID string.
+                    result.ok = true;
                     console.log('Successfully sent message:', response);
                 })
                 .catch((error) => {
@@ -519,6 +520,7 @@ class DenunciaController {
             await messaging.send(message)
                 .then((response) => {
                     // Response is a message ID string.
+                    result.ok = true;
                     console.log('Successfully sent message:', response);
                 })
                 .catch((error) => {
