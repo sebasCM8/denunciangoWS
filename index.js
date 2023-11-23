@@ -29,6 +29,7 @@ app.use("/api", require("./src/routes/usuariosroutes"));
 app.use("/api", require("./src/routes/denunciasroutes"));
 app.use("/api", require("./src/routes/arearoutes"));
 app.use("/api", require("./src/routes/tipodenunciaroutes"));
+app.use("/api", require("./src/routes/alertaroutes"));
 
 //Start Server
 server.listen(app.get("port"), () => {
