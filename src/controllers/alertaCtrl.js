@@ -6,6 +6,8 @@ const { ref, uploadString, getDownloadURL } = require("firebase/storage");
 
 
 class AlertaCtrl {
+    static CLT_NAME = "alertas";
+
     static async registrarAlerta(alertaDatos) {
         var resultado = new ResultadoRespuesta();
 
@@ -14,7 +16,7 @@ class AlertaCtrl {
 
         var datos = nuevaAlerta.alertaAFirestore();
         console.log(datos);
-        var resp = await db.collection("alertas").add(datos);
+        var resp = await db.collection(this.CLT_NAME).add(datos);
         nuevaAlerta.aleId = resp.id;
 
         if (alertaDatos.aleImagenContenido != null && alertaDatos.aleImagenContenido != "") {
@@ -26,7 +28,7 @@ class AlertaCtrl {
 
             nuevaAlerta.aleImagen = nombreImagen;
 
-            const alertaRef = db.collection("alertas").doc(nuevaAlerta.aleId);
+            const alertaRef = db.collection(this.CLT_NAME).doc(nuevaAlerta.aleId);
             var datos2 = nuevaAlerta.actualizarImagenDatos();
             const resp2 = await alertaRef.update(datos2);
         }
@@ -36,6 +38,8 @@ class AlertaCtrl {
         resultado.datos = nuevaAlerta;
         return resultado;
     }
+
+    static async
 }
 
 module.exports = AlertaCtrl;
