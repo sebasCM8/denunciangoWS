@@ -38,8 +38,6 @@ class AlertaCtrl {
         resultado.datos = nuevaAlerta;
         return resultado;
     }
-
-    static async
 }
 
 module.exports = AlertaCtrl;

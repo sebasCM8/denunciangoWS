@@ -1,4 +1,4 @@
-const { db } = require("../database/firestore");
+const { db, messaging } = require("../database/firestore");
 
 const UsuarioDos = require("../models/usuarioDos");
 const ResultadoRespuesta = require("../models/resultadoRespuesta");
@@ -86,6 +86,29 @@ class UsuarioDosCtrl {
 
         resultado.ok = ResultadoRespuesta.RESPUESTA_EXITO;
         resultado.msg = "Se actualizo id del celular correctamente";
+        return resultado;
+    }
+
+    static async enviarMensajeCelular(datosMensaje) {
+        var resultado = new ResultadoRespuesta();
+
+        var mensaje = {
+            data: {
+                alertaMensaje: datosMensaje.mensajeAlerta
+            },
+            token: datosMensaje.tokenCel
+        };
+
+        await messaging.send(mensaje)
+            .then((response) => {
+                resultado.ok = ResultadoRespuesta.RESPUESTA_EXITO;
+                resultado.msg = "Mensaje enviado exitosamente";
+            })
+            .catch((error) => {
+                resultado.ok = ResultadoRespuesta.RESPUESTA_FALLO;
+                resultado.msg = "Excepcion al enviar mensaje: " + error;
+            });
+
         return resultado;
     }
 }

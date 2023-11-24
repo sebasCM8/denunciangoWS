@@ -37,4 +37,15 @@ router.post("/udActualizarTokenCelular", async function (req, res) {
     return res.status(200).send(resultado);
 });
 
+router.post("/udEnviarMensaje", async function (req, res) {
+    var resultado = new ResultadoRespuesta();
+    try {
+        resultado = await UsuarioDosCtrl.enviarMensajeCelular(req.body);
+    } catch (e) {
+        resultado.ok = ResultadoRespuesta.RESPUESTA_FALLO;
+        resultado.msg = "Excepcion enviar mensaje al celular: " + e;
+    }
+    return res.status(200).send(resultado);
+});
+
 module.exports = router;
