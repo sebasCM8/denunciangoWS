@@ -52,6 +52,13 @@ class UsuarioDos {
         this.udLongitud = registro.udLongitud;
     }
 
+    datosActualizarToken() {
+        var datos = {
+            udCelularId: this.udCelularId
+        };
+        return datos;
+    }
+
 }
 
 module.exports = UsuarioDos;

@@ -26,4 +26,15 @@ router.post("/udLoginUsuario", async function (req, res) {
     return res.status(200).send(resultado);
 });
 
+router.post("/udActualizarTokenCelular", async function (req, res) {
+    var resultado = new ResultadoRespuesta();
+    try {
+        resultado = await UsuarioDosCtrl.actualizarTokenCelular(req.body);
+    } catch (e) {
+        resultado.ok = ResultadoRespuesta.RESPUESTA_FALLO;
+        resultado.msg = "Excepcion al actualizar token celular: " + e;
+    }
+    return res.status(200).send(resultado);
+});
+
 module.exports = router;

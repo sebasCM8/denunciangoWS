@@ -71,6 +71,23 @@ class UsuarioDosCtrl {
         resultado.datos = udLogin;
         return resultado;
     }
+
+    static async actualizarTokenCelular(datosUd) {
+        var resultado = new ResultadoRespuesta();
+
+        var udObj = new UsuarioDos();
+        udObj.udId = datosUd.udId;
+        udObj.udCelularId = datosUd.udCelularId;
+
+        var datos = udObj.datosActualizarToken();
+
+        const udRef = db.collection(this.CLT_NAME).doc(udObj.udId);
+        await udRef.update(datos);
+
+        resultado.ok = ResultadoRespuesta.RESPUESTA_EXITO;
+        resultado.msg = "Se actualizo id del celular correctamente";
+        return resultado;
+    }
 }
 
 module.exports = UsuarioDosCtrl;
